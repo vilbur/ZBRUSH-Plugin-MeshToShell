@@ -1,0 +1,14 @@
+
+
+[IPalette, $PLUGIN_NENU ]
+[ISubPalette, [StrMerge, $PLUGIN_NENU, ":", $PLUGIN_SUBMENU ]]
+
+
+[IButton,  [StrMerge, $CONTROLS_PATH, "Template Button"], "",
+
+	[Note, "Template Button" ]
+
+	[VarSet, file_path, [FileNameResolvePath, [StrMerge, $PLUGIN_DATA_FOLDER, "\test.ahk"] ]]
+	[FileExecute, $ZFILE_UTILS_DLL, "LaunchAppWithFile",  #file_path]
+	
+,,,,, 48]
