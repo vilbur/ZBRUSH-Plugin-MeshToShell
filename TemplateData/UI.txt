@@ -8,7 +8,7 @@
 
 	[Note, "Run External File" ]
 
-	[VarSet, file_path, [FileNameResolvePath, [StrMerge, $PLUGIN_DATA_FOLDER, "\test.ahk"] ]]
+	[VarSet, file_path, [StrMerge, $PLUGIN_DATA_PATH, "\test.ahk"] ]
 	[FileExecute, $ZFILE_UTILS_DLL, "LaunchAppWithFile",  #file_path]
 	
 ,,,,, 48]

@@ -1,6 +1,6 @@
 
 
-[VarDef, $DATAFILE, [FileNameResolvePath, [StrMerge, $PLUGIN_DATA_FOLDER, "\\data_file.zvr"] ] ]
+[VarDef, $DATAFILE, [StrMerge, $PLUGIN_DATA_PATH, "\\data_file.zvr"] ]
 
 [VarDef, $DATA_LIST(10), ""]
 
@@ -15,7 +15,7 @@
 	[VarSet, $DATA_LIST([Var, $index]), $value_to_save ]
 
 	[VarSave, $DATA_LIST, $DATAFILE ]
-	
+		
 , // PARAMS
 	$index, $value_to_save
 ]
