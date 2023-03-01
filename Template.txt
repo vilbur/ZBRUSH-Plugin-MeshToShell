@@ -18,4 +18,5 @@
 [VarSet, $ZFILE_UTILS_DLL, [StrMerge, $PLUGIN_DATA_FOLDER, "\\ZFileUtils64.dll"] ]
 
 
+<zscriptinsert, "TemplateData/dataFile.txt">
 <zscriptinsert, "TemplateData/UI.txt">

@@ -4,9 +4,9 @@
 [ISubPalette, [StrMerge, $PLUGIN_NENU, ":", $PLUGIN_SUBMENU ]]
 
 
-[IButton,  [StrMerge, $CONTROLS_PATH, "Template Button"], "",
+[IButton,  [StrMerge, $CONTROLS_PATH, "Run External File"], "",
 
-	[Note, "Template Button" ]
+	[Note, "Run External File" ]
 
 	[VarSet, file_path, [FileNameResolvePath, [StrMerge, $PLUGIN_DATA_FOLDER, "\test.ahk"] ]]
 	[FileExecute, $ZFILE_UTILS_DLL, "LaunchAppWithFile",  #file_path]
