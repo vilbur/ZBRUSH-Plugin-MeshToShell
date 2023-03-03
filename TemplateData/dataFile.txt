@@ -12,9 +12,10 @@
   */
 [RoutineDef, dataFileSave
 ,
-	[VarSet, $DATA_LIST([Var, $index]), $value_to_save ]
-
-	[VarSave, $DATA_LIST, $DATAFILE ]
+	[Note, $PLUGIN_DATA_PATH ]
+	//[VarSet, $DATA_LIST([Var, $index]), $value_to_save ]
+	//
+	//[VarSave, $DATA_LIST, $DATAFILE ]
 		
 , // PARAMS
 	$index, $value_to_save
@@ -36,4 +37,4 @@
 , // PARAMS
 	$index
 ]
- [IButton, "dataFileLoad()" , "", [RoutineCall, dataFileLoad, 0 ] ]
+[IButton, "dataFileLoad()" , "", [RoutineCall, dataFileLoad, 0 ] ]
