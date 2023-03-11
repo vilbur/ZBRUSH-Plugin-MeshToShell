@@ -1,14 +1,8 @@
-
-
 [IPalette, $PLUGIN_NENU ]
 [ISubPalette, [StrMerge, $PLUGIN_NENU, ":", $PLUGIN_SUBMENU ]]
 
 
 
-
-//[IButton, [StrMerge, $CONTROLS_PATH, "Save Data"] , "", [RoutineCall, dataFileSave, 0, "Test value"] ]
-//[IButton, [StrMerge, $CONTROLS_PATH, "Load Data"] , "", [RoutineCall, dataFileLoad, 0 ] ]
-//
 
 [IButton,  [StrMerge, $CONTROLS_PATH, "Run External File"], "",
 
@@ -18,16 +12,3 @@
 	[FileExecute, $ZFILE_UTILS_DLL, "LaunchAppWithFile",  #file_path]
 	
 ,,,,, 48]
-
-
-
-[IButton, [StrMerge, $CONTROLS_PATH, "PLUGIN_DATA_PATH"] , "", [Note, $PLUGIN_DATA_PATH ] ]
-[IButton, "PLUGIN_DATA_PATH" , "", [Note, $PLUGIN_DATA_PATH ] ]
-
-
-//[IButton, [StrMerge, $CONTROLS_PATH, "SCRIPT_DATA_PATH"] , "", [Note, $SCRIPT_DATA_PATH ] ]
-//[IButton, "SCRIPT_DATA_PATH" , "", [Note, $SCRIPT_DATA_PATH ] ]
-
-
-//[IButton, [StrMerge, $CONTROLS_PATH, "Plugin Path"] , "", [Note, [FileNameResolvePath, "" ] ]]
-//[IButton, "Script Path" , "", [Note, [FileNameResolvePath, "" ] ]]

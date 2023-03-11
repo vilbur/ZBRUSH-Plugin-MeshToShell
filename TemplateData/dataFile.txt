@@ -1,8 +1,8 @@
 
 
-[VarDef, $DATAFILE, [StrMerge, $PLUGIN_DATA_PATH, "\\data_file.zvr"] ]
+[VarDef, $DATAFILE, [StrMerge, $PLUGIN_DATA_PATH, "\data_file.zvr"] ]
 
-[VarDef, $DATA_LIST(10), ""]
+[VarDef, $DATA_LIST(20), ""]
 
 [VarDef, $VALUE_LOADED, ""]
 
@@ -12,15 +12,15 @@
   */
 [RoutineDef, dataFileSave
 ,
-	[Note, $PLUGIN_DATA_PATH ]
-	//[VarSet, $DATA_LIST([Var, $index]), $value_to_save ]
-	//
-	//[VarSave, $DATA_LIST, $DATAFILE ]
-		
+	//[Note, $PLUGIN_DATA_PATH ]
+	[VarSet, $DATA_LIST([Var, $index]), $value_to_save ]
+	
+	[VarSave, $DATA_LIST, $DATAFILE ]
+	
 , // PARAMS
 	$index, $value_to_save
 ]
-[IButton, "dataFileSave()" , "", [RoutineCall, dataFileSave, 0, "Test value"] ]
+//[IButton, "dataFileSave()" , "", [RoutineCall, dataFileSave, 0, "Test value"] ]
   
   
 /** dataFileLoad
@@ -37,4 +37,4 @@
 , // PARAMS
 	$index
 ]
-[IButton, "dataFileLoad()" , "", [RoutineCall, dataFileLoad, 0 ] ]
+//[IButton, "dataFileLoad()" , "", [RoutineCall, dataFileLoad, 0 ] ]
