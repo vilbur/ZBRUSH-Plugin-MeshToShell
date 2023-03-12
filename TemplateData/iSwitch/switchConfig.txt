@@ -1,0 +1,69 @@
+[VarDef, $CONFIGFILE,	[FileNameResolvePath, "TemplateData\iSwitch\config.zvr"] ]
+
+
+[If, ! [FileExists, $CONFIGFILE]
+, // THEN
+
+	[MVarDef, CONFIG, 1 ]
+
+	[MVarSet, CONFIG, 0, 1 ]
+
+	[MemSaveToFile, CONFIG, $CONFIGFILE, 1]
+]
+
+
+[If, ! [MemGetSize, CONFIG ]
+, // THEN create memory block
+	[MemCreateFromFile, CONFIG, $CONFIGFILE ]
+]
+
+
+//[If, 1
+//, // THEN
+//	[Note, [MVarGet, CONFIG, 0] ,, 0]
+//]
+
+
+[VarSet, $PLUGIN_NENU, "~CONFIG_TEST"]
+
+[VarSet, $CONTROLS_PATH,	[StrMerge, $PLUGIN_NENU, ":"]]	// MENU PATH: Menu > Submenu > Control
+
+[VarSet, $switch_button, [StrMerge, $CONTROLS_PATH, "Switch"] ]
+
+
+
+[IPalette, $PLUGIN_NENU ]
+
+
+[VarSet, $state, [MVarGet, CONFIG, 0] ]
+
+[ISwitch, $switch_button, [Var, $state], ""
+,
+	[Note, "Enable",, 0.5]
+,
+	[Note, "Disable",, 0.5]
+
+,,,	48]
+
+
+
+
+//
+//[If, [IExists, $switch_button ]
+//, // THEN
+//	[Note, [IGet, $switch_button ] ,, 1 ]
+//]
+
+
+
+
+
+
+[If, 1
+, // THEN
+	[Note, [IGet, $switch_button ] ,, 1 ]
+]
+
+
+//[If, (([IExists, $switch_button ]) && ( [Var, $state] == [IGet, $switch_button ] )),
+//	[ISet, $switch_button, [Var, $state] ]]
