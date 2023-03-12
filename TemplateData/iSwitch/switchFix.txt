@@ -1,0 +1,45 @@
+/*
+	----------- MINDFUCK WARNING -----------
+
+	IF SCRIPT LAODS and ISwitch is in same state as it`s init,
+
+	then ISWITCH DOES NOT WORK FOR FIRST TIME
+
+
+	This method check init state and force Iswitch to to desired state
+
+*/
+
+
+
+[IPalette, "~iSwitchFix"]
+
+
+[VarDef, $disbaled, 0] // ENABLED ON INIT
+[VarSet, $disbaled, 1] // DISABLED ON INIT
+
+[VarDef, $it_works, 0]
+
+
+[If, [IExists, "~iSwitchFix:SwitchButton" ],
+
+   [If, [IGet, "~iSwitchFix:SwitchButton" ] == [Var, $disbaled]
+   , // THEN
+	   [VarSet, $it_works, 1]
+   ]
+]
+
+
+[ISwitch, "~iSwitchFix:SwitchButton", [Var, $disbaled], ""
+,
+	//[Note, "Enable",, 0.5]
+,
+	//[Note, "Disable",, 0.5]
+
+,,,	48]
+
+
+
+[If, (([IExists, "~iSwitchFix:SwitchButton" ]) && ( ! [Var, $it_works] )),
+	[ISet, "~iSwitchFix:SwitchButton", ! [IGet, "~iSwitchFix:SwitchButton" ] ]]
+
