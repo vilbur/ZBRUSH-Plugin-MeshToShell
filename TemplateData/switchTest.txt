@@ -1,0 +1,52 @@
+/*
+	IF SCRIPT LAODS and ISwitch is in same state as it`s init,
+
+	then ISWITCH DOES NOT WORK FOR FIRST TIME
+
+
+	This method check init state and force Iswitch to to desired state
+
+*/
+
+
+
+[IPalette, "~SWITCHTEST"]
+
+
+[VarDef, $init_State, 0]
+//[VarSet, $init_State, 1]
+
+[VarDef, $it_works, 0]
+
+
+[If, [IExists, "~SWITCHTEST:SwitchTest" ],
+
+   [If, [IGet, "~SWITCHTEST:SwitchTest" ] == [Var, $init_State]
+   , // THEN
+	   [Note, "IT WORKS",, 1]
+
+	   [VarSet, $it_works, 1]
+   , // ELSE
+
+	   [Note, "IT IS BROKEN",, 1]
+
+	   [VarSet, $it_works, 0]
+   ]
+]
+
+
+[ISwitch, "~SWITCHTEST:SwitchTest", [Var, $init_State], ""
+,
+	[Note, "Enable",, 0.5]
+,
+	[Note, "Disable",, 0.5]
+
+,,,	48]
+
+
+
+[If, ! [Var, $it_works]
+, // THEN
+
+	[ISet, "~SWITCHTEST:SwitchTest", ! [IGet, "~SWITCHTEST:SwitchTest" ] ]
+]
