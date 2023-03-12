@@ -1,15 +1,15 @@
 /*
 	----------- MINDFUCK WARNING -----------
 
-	IF SCRIPT LAODS and ISwitch is in same state as it`s init,
-
-	then ISWITCH DOES NOT WORK FOR FIRST TIME
+	Fix of ISwitch Button
 
 
-	This method check init state and force Iswitch to to desired state
+	iSwitch does not work properly on first run of script
+
+
+	This method check init state and force ISwitch to to desired state
 
 */
-
 
 
 [IPalette, "~iSwitchFix"]
