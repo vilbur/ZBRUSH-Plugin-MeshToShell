@@ -20,10 +20,11 @@
 
 
 /* INIT STATE OF SWITCH */
-[VarSet, $INIT_STATE, 1 ]
+[VarSet, $INIT_STATE, 0 ]
+//[VarSet, $INIT_STATE, 1 ]
 
 
-[VarDef, $plugin_initialized, [MemGetSize, INIT_STATE ] > 1 ] // this avoid run code on startp of zbrush
+[VarDef, $plugin_initialized, [MemGetSize, INIT_STATE ] > 0 ] // this avoid run code on startp of zbrush
 
 
 [If, ! [MemGetSize, INIT_STATE ]
@@ -64,7 +65,21 @@
 
 
 /* FORCE SWITCH TO CORRECT STATE ON FIRST HIT, BUT NOT ON ZBRUSH STARTUP */
-[If, [Var, $plugin_initialized] && [MVarGet, CURRENT_STATE, 0 ] == [MVarGet, INIT_STATE, 0 ]
+[If, [Var, $plugin_initialized]
 , // THEN
-	[ISet,  $switch_button, ! [MVarGet, INIT_STATE, 0 ]  ]
+
+	[If, [Var, $INIT_STATE ]
+	, // THEN
+		[If, [MVarGet, CURRENT_STATE, 0 ] == [MVarGet, INIT_STATE, 0 ]
+		, // THEN
+			[IUnPress,  $switch_button ]
+		]
+
+	, // ELSE
+
+		[If, [MVarGet, CURRENT_STATE, 0 ] == [MVarGet, INIT_STATE, 0 ]
+		, // THEN
+			[IPress,  $switch_button ]
+		]
+	]
 ]
