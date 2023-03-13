@@ -1,45 +1,91 @@
-/*
-	----------- MINDFUCK WARNING -----------
+/**
+	----------------- ISWITCH MINDFUCK NOTES -----------------
 
-	Fix of ISwitch Button
-
-
-	iSwitch does not work properly on first run of script
+	1. Script runs FIRST time on Zbrush startup, memory blocks are created in this time
 
 
-	This method check init state and force ISwitch to to desired state
-
-*/
-
-
-[IPalette, "~iSwitchFix"]
+	2. Script runs EVERY time any control is fired, if scripth has been interrupted by another plugin
+		( If another plugin or script is used then first fire of control RUNS WHOLE SCRIPT AGAIN )
 
 
-[VarDef, $disbaled, 0] // ENABLED ON INIT
-[VarSet, $disbaled, 1] // DISABLED ON INIT
+	3. First click on iSwitch FIRES EVENT OF INIT STATE, NOT OPPOSITE STATE as should be excepted
+  		( if PRESSED, then FIRES PRESSED, if UNPRESSED, then fires UNPRESSED )
 
-[VarDef, $it_works, 0]
+		BUT THIS HAPPEN ONLY IF ISWITCH IS IN INIT STATE
+			( if INIT STATE is PRESSED and iSwitch is UNPRESSED, then works normaly  )
+
+  */
 
 
-[If, [IExists, "~iSwitchFix:SwitchButton" ],
+[VarDef, $CONFIGFILE,	[FileNameResolvePath, "TemplateData\iSwitch\config.zvr"] ]
 
-   [If, [IGet, "~iSwitchFix:SwitchButton" ] == [Var, $disbaled]
-   , // THEN
-	   [VarSet, $it_works, 1]
-   ]
+
+[VarDef, $plugin_initialized, [MemGetSize, CONFIG ] > 1 ]
+
+
+[If, ! [MemGetSize, CONFIG ]
+, // THEN create memory block
+
+	[MVarDef, CONFIG,	1 ]
+	[MVarDef, INIT_STATE,	1 ]
+	[MVarDef, CURRENT_STATE,	1 ]
+
+	/* SET DEFAULTS */
+	[VarSet, $init_state, 1 ]
+
+	[MVarSet, CONFIG,	0, [Var, $init_state] ]
+	[MVarSet, INIT_STATE,	0, [Var, $init_state] ]
+	[MVarSet, CURRENT_STATE,	0, [Var, $init_state] ]
+	//[MVarSet, CURRENT_STATE,	0, -1 ]
+
+//	[Note, "INIT: MEMORY CREATED",, 1]
+//
+//,
+//	[Note, "MEMORY EXISTS",, 1]
+
+	//[If, ! [FileExists, $CONFIGFILE]
+	//, // THEN
+	//
+	//	[MemSaveToFile, CONFIG, $CONFIGFILE, 1]
+	//
+	////, // ELSE
+	//]
+	//
+	//[MemCreateFromFile, CONFIG, $CONFIGFILE ]
+	//[MemCreateFromFile, INIT_STATE, $CONFIGFILE ]
+
 ]
 
 
-[ISwitch, "~iSwitchFix:SwitchButton", [Var, $disbaled], ""
+[VarSet, $PLUGIN_NENU, "~CONFIG_TEST"]
+
+[VarSet, $CONTROLS_PATH,	[StrMerge, $PLUGIN_NENU, ":"]]	// MENU PATH: Menu > Submenu > Control
+
+[VarSet, $switch_button, [StrMerge, $CONTROLS_PATH, "Switch"] ]
+
+
+[IPalette, $PLUGIN_NENU ]
+
+
+
+[ISwitch, $switch_button, [MVarGet, INIT_STATE, 0], ""
 ,
-	//[Note, "Enable",, 0.5]
+	[Note, "Enable",, 0.5]
+	[MVarSet, CURRENT_STATE, 0, 1 ]
 ,
-	//[Note, "Disable",, 0.5]
+
+	[Note, "Disable",, 0.5]
+	[MVarSet, CURRENT_STATE, 0, 0 ]
 
 ,,,	48]
 
 
+[If, [Var, $plugin_initialized] && [MVarGet, CURRENT_STATE, 0 ] == [MVarGet, INIT_STATE, 0 ]
+, // THEN
+	[ISet,  $switch_button, ! [MVarGet, INIT_STATE, 0 ]  ]
+]
 
-[If, (([IExists, "~iSwitchFix:SwitchButton" ]) && ( ! [Var, $it_works] )),
-	[ISet, "~iSwitchFix:SwitchButton", ! [IGet, "~iSwitchFix:SwitchButton" ] ]]
+
+
+
 
