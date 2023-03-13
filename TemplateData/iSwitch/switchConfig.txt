@@ -80,12 +80,11 @@
 ,,,	48]
 
 
-[If, [Var, $plugin_initialized] && [MVarGet, CURRENT_STATE, 0 ] == [MVarGet, INIT_STATE, 0 ]
+/* FORCE SWITCH TO CORRECT STATE ON FIRST HIT, BUT NOT ON ZBRUSH STARTUP */
+[If, [Var, $plugin_initialized] && ([MVarGet, CURRENT_STATE, 0 ] == [MVarGet, INIT_STATE, 0 ])
 , // THEN
 	[ISet,  $switch_button, ! [MVarGet, INIT_STATE, 0 ]  ]
 ]
-
-
 
 
 
