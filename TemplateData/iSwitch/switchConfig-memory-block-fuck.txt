@@ -1,0 +1,132 @@
+/**
+
+	----------------- ISWITCH MINDFUCK NOTES ( HOW MUCH CODE IS NEEDED TO MAKE ONE FUCKING BUTTON WORKING ) -----------------
+
+	1. Script runs FIRST time on Zbrush startup, memory blocks are created in this time
+
+
+	2. Script runs EVERY time any control is fired, if scripth has been interrupted by another plugin
+		( If another plugin or script is used then first fire of control RUNS WHOLE SCRIPT AGAIN )
+
+
+	3. First click on iSwitch FIRES EVENT OF INIT STATE, NOT OPPOSITE STATE as should be excepted
+  		( if PRESSED, then FIRES PRESSED, if UNPRESSED, then fires UNPRESSED )
+
+		BUT THIS HAPPEN ONLY IF ISWITCH IS IN INIT STATE
+			( if INIT STATE is PRESSED and iSwitch is UNPRESSED, then works normaly  )
+
+
+*/
+
+/* INIT STATE OF SWITCH */
+[VarSet, $INIT_STATE, 0 ]
+//[VarSet, $INIT_STATE, 1 ]
+
+[VarDef, $CONFIGFILE,	[FileNameResolvePath, "TemplateData\iSwitch\switchConfig.zvr"] ]
+
+[VarDef, $plugin_initialized, [MemGetSize, INIT_STATE ] > 0 ] // this avoid run code on startp of zbrush
+
+
+/** saveConfig
+//  */
+//[RoutineDef, saveConfig
+//,
+//	//[Note, "saveConfig"]
+//	[Var, $error, [MemSaveToFile, CURRENT_STATE, $CONFIGFILE, 1]]
+//
+//	[Note, [StrMerge, "error,: ", [Var, $error ] ]
+//
+//]
+//[IButton, "saveConfig()" , "", [RoutineCall, saveConfig] ]
+
+
+[If, ! [MemGetSize, INIT_STATE ]
+,
+	/* DEFINE MEMORY BLOCKS */
+	[MVarDef, INIT_STATE,	1 ]
+	[MVarDef, CURRENT_STATE,	1 ]
+
+	/* SET DEFAULTS */
+	[MVarSet, INIT_STATE,	0, [Var, $INIT_STATE] ]
+	[MVarSet, CURRENT_STATE,	0, [Var, $INIT_STATE] ]
+
+	[If, ! [FileExists, $CONFIGFILE]
+	, // THEN
+
+		[MemSaveToFile, INIT_STATE, $CONFIGFILE, 1]
+		//[RoutineCall, saveConfig]
+	]
+
+	[MemCreateFromFile, INIT_STATE,	$CONFIGFILE ]
+	[MemCreateFromFile, CURRENT_STATE,	$CONFIGFILE ]
+
+]
+
+
+
+/*  UI */
+[VarSet, $PLUGIN_NENU, "~CONFIG_TEST"]
+
+[IPalette, $PLUGIN_NENU ]
+
+[VarSet, $switch_button, [StrMerge, $PLUGIN_NENU, ":", "Switch"] ]
+[VarSet, $init_button, [StrMerge, $PLUGIN_NENU, ":", "Init"] ]
+
+
+[IButton, $init_button, "Tooltip"
+,
+	//Commands
+
+,	/*Disabled*/,	/*Width*/,	/*Hotkey*/,	/*Icon*/,	/*Height*/]
+
+/* ----- SWITCH  BUTTON----- */
+[ISwitch, $switch_button, [MVarGet, INIT_STATE, 0], ""
+, // PRESS
+
+	[Note, "Enable",, 0.5]
+
+	[MVarSet, CURRENT_STATE, 0, 1 ]
+	//[RoutineCall, saveConfig]
+	[MemSaveToFile, CURRENT_STATE, $CONFIGFILE, 1]
+
+, // UNPRESS
+
+	[Note, "Disable",, 0.5]
+
+	[MVarSet, CURRENT_STATE, 0, 0 ]
+
+	//[RoutineCall, saveConfig]
+
+	[MemSaveToFile, CURRENT_STATE, $CONFIGFILE, 1]
+
+,,,	48]
+
+
+/* FORCE SWITCH TO CORRECT STATE ON FIRST HIT, BUT NOT ON ZBRUSH STARTUP */
+[If, [Var, $plugin_initialized] && ([MVarGet, CURRENT_STATE, 0 ] == [MVarGet, INIT_STATE, 0 ])
+, // THEN
+	[ISet,  $switch_button, ! [MVarGet, CURRENT_STATE, 0 ]  ]
+]
+
+
+
+[IButton, [StrMerge, $PLUGIN_NENU, ":", "GET VALUE"], ""
+,
+
+	[MVarDef, TEST_STATE,	1 ]
+
+	//[MVarSet, TEST_STATE,	0, [IGet, $switch_button ] ]
+
+	//[Note, [MVarGet, TEST_STATE, 0 ],, 0]
+
+	[MemCreateFromFile, TEST_STATE,	$CONFIGFILE ]
+
+	[Note, [MVarGet, TEST_STATE, 0 ],, 0]
+
+
+,	/*Disabled*/,	/*Width*/,	/*Hotkey*/,	/*Icon*/,	48]
+
+
+
+
+
