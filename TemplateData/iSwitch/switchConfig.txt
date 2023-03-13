@@ -20,17 +20,14 @@
 */
 
 /* INIT STATE OF SWITCH */
-[VarSet, $INIT_STATE, 0 ]
-//[VarSet, $INIT_STATE, 1 ]
+[VarSet, $INIT_SWITCH_STATE, 0 ]
+//[VarSet, $INIT_SWITCH_STATE, 1 ]
+
+[VarDef, $INIT_STATE(1), 0]
 
 [VarDef, $CONFIGFILE,	[FileNameResolvePath, "TemplateData\iSwitch\switchConfig.zvr"] ]
 
-[VarDef, $plugin_initialized, [MemGetSize, INIT_STATE ] > 0 ] // this avoid run code on startp of zbrush
-
-
-[VarDef, $DATA_LIST(1), 0]
-
-[VarDef, $VALUE_LOADED]
+[VarDef, $plugin_initialized, [MemGetSize, CURRENT_STATE ] > 0 ] // this avoid run code on startp of zbrush
 
 
 /** dataFileSave
@@ -38,71 +35,34 @@
   */
 [RoutineDef, dataFileSave
 ,
-	//[Note, $PLUGIN_DATA_PATH ]
-	[VarSet, $DATA_LIST([Var, $index]), $value_to_save ]
+	[VarSet, $INIT_STATE([Var, $index]), $value_to_save ]
 
-	[VarSave, $DATA_LIST, $CONFIGFILE ]
+	[VarSave, $INIT_STATE, $CONFIGFILE ]
 
 	//[Note, [StrMerge, "dataFile.configSave \n\nIndex: ", $index, "\n\nValue: ",  $value_to_save ],, 0]
 
 , // PARAMS
 	$index, $value_to_save
 ]
-//[IButton, "dataFileSave()" , "", [RoutineCall, dataFileSave, 0, "Test value"] ]
 
 
-/** dataFileLoad
-  *
-  */
-[RoutineDef, dataFileLoad
+[If, ! [MemGetSize, CURRENT_STATE ]
 ,
-	[VarLoad, $DATA_LIST, $CONFIGFILE ]
-
-	[VarSet, $VALUE_LOADED, [Var, $DATA_LIST([Var, $index]) ] ]
-
-	[Note, $VALUE_LOADED ]
-
-, // PARAMS
-	$index
-]
-//[IButton, "dataFileLoad()" , "", [RoutineCall, dataFileLoad, 0 ] ]
-
-
-
-
-/** saveConfig
-//  */
-//[RoutineDef, saveConfig
-//,
-//	//[Note, "saveConfig"]
-//	[Var, $error, [MemSaveToFile, CURRENT_STATE, $CONFIGFILE, 1]]
-//
-//	[Note, [StrMerge, "error,: ", [Var, $error ] ]
-//
-//]
-//[IButton, "saveConfig()" , "", [RoutineCall, saveConfig] ]
-
-
-[If, ! [MemGetSize, INIT_STATE ]
-,
-	/* DEFINE MEMORY BLOCKS */
-	[MVarDef, INIT_STATE,	1 ]
+	/* DEFINE MEMORY BLOCK */
 	[MVarDef, CURRENT_STATE,	1 ]
 
 	/* SET DEFAULTS */
-	[MVarSet, INIT_STATE,	0, [Var, $INIT_STATE] ]
-	[MVarSet, CURRENT_STATE,	0, [Var, $INIT_STATE] ]
+	[MVarSet, CURRENT_STATE,	0, [Var, $INIT_SWITCH_STATE] ]
 
 	[If, ! [FileExists, $CONFIGFILE]
 	, // THEN
 
-		[RoutineCall, dataFileSave, 0, [Var, $INIT_STATE] ]
+		[RoutineCall, dataFileSave, 0, [Var, $INIT_SWITCH_STATE] ]
 	]
 
-	[RoutineCall, dataFileLoad, 0 ]
+	[VarLoad, $INIT_STATE, $CONFIGFILE ]
 
-	[MVarSet, INIT_STATE,	0, [Var, $VALUE_LOADED] ]
-	[MVarSet, CURRENT_STATE,	0, [Var, $VALUE_LOADED] ]
+	[MVarSet, CURRENT_STATE,	0, [Var, $INIT_STATE(0)] ]
 
 ]
 
@@ -113,26 +73,16 @@
 
 [IPalette, $PLUGIN_NENU ]
 
-[VarSet, $switch_button, [StrMerge, $PLUGIN_NENU, ":", "Switch"] ]
-[VarSet, $init_button, [StrMerge, $PLUGIN_NENU, ":", "Init"] ]
+[VarSet, $switch_button,	[StrMerge, $PLUGIN_NENU, ":", "Switch"] ]
 
-
-//[IButton, $init_button, "Tooltip"
-//,
-//	//Commands
-//	[RoutineCall, dataFileLoad, 0 ]
-//
-//,	/*Disabled*/,	/*Width*/,	/*Hotkey*/,	/*Icon*/,	/*Height*/]
 
 /* ----- SWITCH  BUTTON----- */
-[ISwitch, $switch_button, [MVarGet, INIT_STATE, 0], ""
+[ISwitch, $switch_button, [Var, $INIT_STATE(0)], ""
 , // PRESS
 
 	[Note, "Enable",, 0.5]
 
 	[MVarSet, CURRENT_STATE, 0, 1 ]
-	//[RoutineCall, saveConfig]
-	//[MemSaveToFile, CURRENT_STATE, $CONFIGFILE, 1]
 
 	[RoutineCall, dataFileSave, 0, 1 ]
 
@@ -142,16 +92,13 @@
 
 	[MVarSet, CURRENT_STATE, 0, 0 ]
 
-	//[RoutineCall, saveConfig]
-
-	//[MemSaveToFile, CURRENT_STATE, $CONFIGFILE, 1]
 	[RoutineCall, dataFileSave, 0, 0 ]
 
 ,,,	48]
 
 
 /* FORCE SWITCH TO CORRECT STATE ON FIRST HIT, BUT NOT ON ZBRUSH STARTUP */
-[If, [Var, $plugin_initialized] && ([MVarGet, CURRENT_STATE, 0 ] == [MVarGet, INIT_STATE, 0 ])
+[If, [Var, $plugin_initialized] && ([MVarGet, CURRENT_STATE, 0 ] == [Var, $INIT_STATE(0)] )
 , // THEN
 	[ISet,  $switch_button, ! [MVarGet, CURRENT_STATE, 0 ]  ]
 ]
