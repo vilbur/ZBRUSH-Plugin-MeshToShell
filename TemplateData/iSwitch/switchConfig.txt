@@ -1,10 +1,13 @@
 [VarDef, $CONFIGFILE,	[FileNameResolvePath, "TemplateData\iSwitch\config.zvr"] ]
 
 
+
+
 [If, ! [FileExists, $CONFIGFILE]
 , // THEN
 
 	[MVarDef, CONFIG, 1 ]
+	[MVarDef, CURRENT_STATE, 1 ]
 
 	[MVarSet, CONFIG, 0, 1 ]
 
@@ -15,13 +18,15 @@
 [If, ! [MemGetSize, CONFIG ]
 , // THEN create memory block
 	[MemCreateFromFile, CONFIG, $CONFIGFILE ]
+	[MemCreateFromFile, CURRENT_STATE, $CONFIGFILE ]
+
+//, // ELSE
+//
+//	[Note, "CONFIG EXISTS",, 1]
+
+
 ]
 
-
-//[If, 1
-//, // THEN
-//	[Note, [MVarGet, CONFIG, 0] ,, 0]
-//]
 
 
 [VarSet, $PLUGIN_NENU, "~CONFIG_TEST"]
@@ -35,35 +40,50 @@
 [IPalette, $PLUGIN_NENU ]
 
 
-[VarSet, $state, [MVarGet, CONFIG, 0] ]
 
-[ISwitch, $switch_button, [Var, $state], ""
+[VarSet, $init_state, [MVarGet, CONFIG, 0] ]
+
+
+[If, 1
+, // THEN
+	[Note, [StrMerge, "CONFIG:  ", [MVarGet, CURRENT_STATE, 0 ], "\n\n" , "CURRENT: ", [MVarGet, CONFIG, 0 ]],, 0]
+]
+
+
+
+
+[If, [MVarGet, CURRENT_STATE, 0 ] != [Var, $init_state ]
+, // THEN
+	[Note, "IT WORKS",, 1]
+
+	[VarSet, $does_not_work, 0]
+, // ELSE
+
+	[Note, "IT IS BROKEN",, 1]
+
+	[VarSet, $does_not_work, 1]
+]
+
+
+
+[ISwitch, $switch_button, [Var, $init_state], ""
 ,
 	[Note, "Enable",, 0.5]
+	[MVarSet, CURRENT_STATE, 0, 1 ]
+
 ,
 	[Note, "Disable",, 0.5]
+	[MVarSet, CURRENT_STATE, 0, 0 ]
 
 ,,,	48]
 
 
 
-
-//
-//[If, [IExists, $switch_button ]
-//, // THEN
-//	[Note, [IGet, $switch_button ] ,, 1 ]
-//]
-
-
-
-
-
-
-[If, 1
+//[If, [MVarGet, CURRENT_STATE, 0 ] != [Var, $init_state ]
+[If, [Var, $does_not_work]
 , // THEN
-	[Note, [IGet, $switch_button ] ,, 1 ]
+	[ISet,  $switch_button, ! [MVarGet, CURRENT_STATE, 0 ]  ]
+
+//, // ELSE
+
 ]
-
-
-//[If, (([IExists, $switch_button ]) && ( [Var, $state] == [IGet, $switch_button ] )),
-//	[ISet, $switch_button, [Var, $state] ]]
