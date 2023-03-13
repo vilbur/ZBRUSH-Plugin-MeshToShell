@@ -1,5 +1,6 @@
 /**
-	----------------- ISWITCH MINDFUCK NOTES -----------------
+
+	----------------- ISWITCH MINDFUCK NOTES ( HOW MUCH CODE IS NEEDED TO MAKE ONE FUCKING BUTTON WORKING ) -----------------
 
 	1. Script runs FIRST time on Zbrush startup, memory blocks are created in this time
 
@@ -14,11 +15,12 @@
 		BUT THIS HAPPEN ONLY IF ISWITCH IS IN INIT STATE
 			( if INIT STATE is PRESSED and iSwitch is UNPRESSED, then works normaly  )
 
+
 */
 
 
 /* INIT STATE OF SWITCH */
-[VarSet, $init_state, 1 ]
+[VarSet, $INIT_STATE, 1 ]
 
 
 [VarDef, $plugin_initialized, [MemGetSize, INIT_STATE ] > 1 ] // this avoid run code on startp of zbrush
@@ -26,12 +28,13 @@
 
 [If, ! [MemGetSize, INIT_STATE ]
 ,
+	/* DEFINE MEMORY BLOCKS */
 	[MVarDef, INIT_STATE,	1 ]
 	[MVarDef, CURRENT_STATE,	1 ]
 
 	/* SET DEFAULTS */
-	[MVarSet, INIT_STATE,	0, [Var, $init_state] ]
-	[MVarSet, CURRENT_STATE,	0, [Var, $init_state] ]
+	[MVarSet, INIT_STATE,	0, [Var, $INIT_STATE] ]
+	[MVarSet, CURRENT_STATE,	0, [Var, $INIT_STATE] ]
 ]
 
 
@@ -43,7 +46,7 @@
 [VarSet, $switch_button, [StrMerge, $PLUGIN_NENU, ":", "Switch"] ]
 
 
-/* ----- SWITCH ----- */
+/* ----- SWITCH  BUTTON----- */
 [ISwitch, $switch_button, [MVarGet, INIT_STATE, 0], ""
 , // PRESS
 
@@ -60,7 +63,7 @@
 ,,,	48]
 
 
-/* FORCE SWITCH TO CORRECT STATE ON FIRST HIT, BUT AVOID IT ON ZBRUSH STARTUP */
+/* FORCE SWITCH TO CORRECT STATE ON FIRST HIT, BUT NOT ON ZBRUSH STARTUP */
 [If, [Var, $plugin_initialized] && [MVarGet, CURRENT_STATE, 0 ] == [MVarGet, INIT_STATE, 0 ]
 , // THEN
 	[ISet,  $switch_button, ! [MVarGet, INIT_STATE, 0 ]  ]
