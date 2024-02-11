@@ -1,7 +1,7 @@
 /**
   *
   */
-[VarSet, $PLUGIN_NAME, 	"Template"]
+[VarSet, $PLUGIN_NAME, 	"TEMPLATE"]
 [VarSet, $PLUGIN_SUBMENU, 	"TemplateSubmenu"]
 
 
@@ -11,20 +11,15 @@
 
 
 //[VarSet, $CONTROLS_PATH,	[StrMerge, $PLUGIN_NENU, ":", $PLUGIN_SUBMENU, ":"]]	// FULL PATH: Menu > Submenu > Control
-//[VarSet, $CONTROLS_PATH,	[StrMerge, $PLUGIN_NENU, ":"]]	// MENU PATH: Menu > Submenu > Control
-[VarSet, $CONTROLS_PATH,	"" ]	// DEV controls in script pane
+[VarSet, $CONTROLS_PATH,	[StrMerge, $PLUGIN_NENU, ":"]]	// MENU PATH: Menu > Submenu > Control
+//[VarSet, $CONTROLS_PATH,	"" ]	// DEV controls in script pane
 
 
 [VarSet, $ZFILE_UTILS_DLL, [StrMerge, $PLUGIN_DATA_PATH, "\\ZFileUtils64.dll"] ]
 
 
-<zscriptinsert, "TemplateData/dataFile.txt">
-<zscriptinsert, "TemplateData/UI.txt">
+
+[IPalette,  $PLUGIN_NENU ]
 
 
-
-/* This button is fired up by DefaultZScript, it runs plugin first time and initialize it, otherwise ISwitch does not work on first click properly */
-[IButton, Template:TemplateInit, "",,1,,,,0]
-
-/* Fire init button of plugin, place it in DefaultZScript */
-[If, 1,[IPress, Template:TemplateInit]] // init plugin
+<zscriptinsert, "TemplateData/iSwitch/switchConfig.txt">	// "./TemplateData/iSwitch/switchConfig.txt"

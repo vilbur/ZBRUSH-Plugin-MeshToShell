@@ -89,6 +89,12 @@
 [VarSet, $switch_button_1,	[StrMerge, $PLUGIN_NENU, ":", "Switch 2"] ]
 
 
+[IButton, "~CONFIG_TEST:init", "Tooltip"
+,
+	//Commands
+
+,	/*Disabled*/,	/*Width*/,	/*Hotkey*/,	/*Icon*/,	/*Height*/]
+
 /* ----- SWITCH  BUTTON----- */
 [ISwitch, $switch_button_0, [Var, $INIT_STATE(0)], ""
 , // PRESS
@@ -130,35 +136,35 @@
 ,,,	48]
 
 
-[If,1
-, // THEN
-	[Note, [StrMerge, "Switch 1\n\nINIT_STATE: ", [Var, $INIT_STATE( 0 )], "\n\nCURRENT_STATE: ", [MVarGet, CURRENT_STATE, 0 ], "\n\n","Switch 2\n\nINIT_STATE: ", [Var, $INIT_STATE( 1 )], "\n\nCURRENT_STATE: ", [MVarGet, CURRENT_STATE, 1 ]  ]]
-
-]
-
-
-
-
-/* FORCE SWITCH TO CORRECT STATE ON FIRST HIT, BUT NOT ON ZBRUSH STARTUP */
-[If, [Var, $plugin_initialized] && ([MVarGet, CURRENT_STATE, 0 ] == [Var, $INIT_STATE(0)] )
-, // THEN
-
-
-	[Note, [StrMerge, "Switch 1\n\nINIT_STATE: ", [Var, $INIT_STATE( 0 )], "\n\nCURRENT_STATE: ", [MVarGet, CURRENT_STATE, 0 ] ]]
-
-	[ISet,  $switch_button_0, ! [MVarGet, CURRENT_STATE, 0 ]  ]
-]
+//[If,1
+//, // THEN
+//	[Note, [StrMerge, "Switch 1\n\nINIT_STATE: ", [Var, $INIT_STATE( 0 )], "\n\nCURRENT_STATE: ", [MVarGet, CURRENT_STATE, 0 ], "\n\n","Switch 2\n\nINIT_STATE: ", [Var, $INIT_STATE( 1 )], "\n\nCURRENT_STATE: ", [MVarGet, CURRENT_STATE, 1 ]  ]]
+//
+//]
 
 
 
-/* FORCE SWITCH TO CORRECT STATE ON FIRST HIT, BUT NOT ON ZBRUSH STARTUP */
-[If, [Var, $plugin_initialized] && ([MVarGet, CURRENT_STATE, 1 ] == [Var, $INIT_STATE(1)] )
-, // THEN
 
-	[Note, [StrMerge, "Switch 2\n\nINIT_STATE: ", [Var, $INIT_STATE( 1 )], "\n\nCURRENT_STATE: ", [MVarGet, CURRENT_STATE, 1 ] ]]
-
-	[ISet,  $switch_button_1, ! [MVarGet, CURRENT_STATE, 1 ]  ]
-]
+///* FORCE SWITCH TO CORRECT STATE ON FIRST HIT, BUT NOT ON ZBRUSH STARTUP */
+//[If, [Var, $plugin_initialized] && ([MVarGet, CURRENT_STATE, 0 ] == [Var, $INIT_STATE(0)] )
+//, // THEN
+//
+//
+//	[Note, [StrMerge, "Switch 1\n\nINIT_STATE: ", [Var, $INIT_STATE( 0 )], "\n\nCURRENT_STATE: ", [MVarGet, CURRENT_STATE, 0 ] ]]
+//
+//	[ISet,  $switch_button_0, ! [MVarGet, CURRENT_STATE, 0 ]  ]
+//]
+//
+//
+//
+///* FORCE SWITCH TO CORRECT STATE ON FIRST HIT, BUT NOT ON ZBRUSH STARTUP */
+//[If, [Var, $plugin_initialized] && ([MVarGet, CURRENT_STATE, 1 ] == [Var, $INIT_STATE(1)] )
+//, // THEN
+//
+//	[Note, [StrMerge, "Switch 2\n\nINIT_STATE: ", [Var, $INIT_STATE( 1 )], "\n\nCURRENT_STATE: ", [MVarGet, CURRENT_STATE, 1 ] ]]
+//
+//	[ISet,  $switch_button_1, ! [MVarGet, CURRENT_STATE, 1 ]  ]
+//]
 
 
 

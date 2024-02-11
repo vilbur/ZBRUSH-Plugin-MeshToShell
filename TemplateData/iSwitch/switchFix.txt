@@ -65,21 +65,7 @@
 
 
 /* FORCE SWITCH TO CORRECT STATE ON FIRST HIT, BUT NOT ON ZBRUSH STARTUP */
-[If, [Var, $plugin_initialized]
+[If, [Var, $plugin_initialized] && ([MVarGet, CURRENT_STATE, 0 ] == [MVarGet, INIT_STATE, 0 ])
 , // THEN
-
-	[If, [Var, $INIT_STATE ]
-	, // THEN
-		[If, [MVarGet, CURRENT_STATE, 0 ] == [MVarGet, INIT_STATE, 0 ]
-		, // THEN
-			[IUnPress,  $switch_button ]
-		]
-
-	, // ELSE
-
-		[If, [MVarGet, CURRENT_STATE, 0 ] == [MVarGet, INIT_STATE, 0 ]
-		, // THEN
-			[IPress,  $switch_button ]
-		]
-	]
+	[ISet,  $switch_button, ! [MVarGet, CURRENT_STATE, 0 ]  ]
 ]

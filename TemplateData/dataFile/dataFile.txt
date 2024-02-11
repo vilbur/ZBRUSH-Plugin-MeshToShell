@@ -1,0 +1,76 @@
+
+[VarSet, $DATAFILE_SUBMENU, [StrMerge, $PLUGIN_NENU, ":", "dataFile"]]
+
+[VarSet, $CONTROLS_DATAFILE,	[StrMerge, $DATAFILE_SUBMENU, ":"]]	// FULL PATH: Menu > Submenu > Control
+
+
+
+
+[VarDef, $DATAFILE,	[FileNameResolvePath, "TemplateData\dataFile\config.zvr"] ]
+
+[VarDef, $DATA_LIST(1)]
+
+[VarDef, $VALUE_LOADED]
+
+
+/** dataFileSave
+  *
+  */
+[RoutineDef, dataFileSave
+,
+	//[Note, $PLUGIN_DATA_PATH ]
+	[VarSet, $DATA_LIST([Var, $index]), $value_to_save ]
+
+	[VarSave, $DATA_LIST, $DATAFILE ]
+
+	[Note, [StrMerge, "dataFile.configSave \n\nIndex: ", $index, "\n\nValue: ",  $value_to_save ],, 0]
+
+, // PARAMS
+	$index, $value_to_save
+]
+//[IButton, "dataFileSave()" , "", [RoutineCall, dataFileSave, 0, "Test value"] ]
+
+
+/** dataFileLoad
+  *
+  */
+[RoutineDef, dataFileLoad
+,
+	[VarLoad, $DATA_LIST, $DATAFILE ]
+
+	[VarSet, $VALUE_LOADED, [Var, $DATA_LIST([Var, $index]) ] ]
+
+	//[Note, $VALUE_LOADED ]
+
+, // PARAMS
+	$index
+]
+//[IButton, "dataFileLoad()" , "", [RoutineCall, dataFileLoad, 0 ] ]
+
+
+/** dataFileInit
+  *
+  */
+[RoutineDef, dataFileInit
+,
+	[If, [FileExists, $DATAFILE]
+	, // THEN
+		[VarLoad, $DATA_LIST, $DATAFILE ]
+
+	, // ELSE
+		[VarSave, $DATA_LIST, $DATAFILE]
+	]
+]
+//[IButton, "dataFileInit()" , "", [RoutineCall, dataFileInit ] ]
+
+[RoutineCall, dataFileInit ]
+
+
+[ISubPalette,  $DATAFILE_SUBMENU ]
+
+[IButton,  [StrMerge, $CONTROLS_DATAFILE, "Get Data"],	"",	[RoutineCall, dataFileInit ][Note, [Var, $DATA_LIST(0)] ], ,,,,	48]
+[IButton,  [StrMerge, $CONTROLS_DATAFILE, "Load Config"],	"",	[RoutineCall, dataFileLoad, 0 ][Note, $VALUE_LOADED] , ,,,,	48]
+
+[IButton,  [StrMerge, $CONTROLS_DATAFILE, "Config Set 0"],	"",	[RoutineCall, dataFileSave, 0, 0 ] , ,,,,	48]
+[IButton,  [StrMerge, $CONTROLS_DATAFILE, "Config Set 1"],	"",	[RoutineCall, dataFileSave, 0, 1 ] , ,,,,	48]
+[IButton,  [StrMerge, $CONTROLS_DATAFILE, "Config Set 2"],	"",	[RoutineCall, dataFileSave, 0, 2 ] , ,,,,	48]
