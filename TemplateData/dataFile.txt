@@ -1,10 +1,10 @@
 
 
-[VarDef, DATAFILE, [StrMerge, PLUGIN_DATA_PATH, "\data_file.zvr"] ]
+[VarDef, DATAFILE, [StrMerge, PLUGINDATAPATH, "\datafile.zvr"] ]
 
-[VarDef, DATA_LIST(20), ""]
+[VarDef, DATALIST(20), ""]
 
-[VarDef, VALUE_LOADED, ""]
+[VarDef, VALUELOADED, ""]
 
 
 /** dataFileSave
@@ -12,13 +12,13 @@
   */
 [RoutineDef, dataFileSave
 ,
-	//[Note, PLUGIN_DATA_PATH ]
-	[VarSet, DATA_LIST([Var, index]), value_to_save ]
+	//[Note, PLUGINDATAPATH ]
+	[VarSet, DATALIST([Var, index]), valuetosave ]
 	
-	[VarSave, DATA_LIST, DATAFILE ]
+	[VarSave, DATALIST, DATAFILE ]
 	
 , // PARAMS
-	index, value_to_save
+	index, valuetosave
 ]
 //[IButton, "dataFileSave()" , "", [RoutineCall, dataFileSave, 0, "Test value"] ]
   
@@ -28,11 +28,11 @@
   */
 [RoutineDef, dataFileLoad
 ,
-	[VarLoad, DATA_LIST, DATAFILE ]			
+	[VarLoad, DATALIST, DATAFILE ]			
 
-	[VarSet, VALUE_LOADED, [Var, DATA_LIST([Var, index]) ] ]
+	[VarSet, VALUELOADED, [Var, DATALIST([Var, index]) ] ]
 	
-	[Note, VALUE_LOADED ]
+	[Note, VALUELOADED ]
 	
 , // PARAMS
 	index

@@ -20,52 +20,52 @@
 
 
 /* INIT STATE OF SWITCH */
-[VarSet, INIT_STATE, 0 ]
-//[VarSet, INIT_STATE, 1 ]
+[VarSet, INITSTATE, 0 ]
+//[VarSet, INITSTATE, 1 ]
 
 
-[VarDef, plugin_initialized, [MemGetSize, INIT_STATE ] > 0 ] // this avoid run code on startp of zbrush
+[VarDef, plugininitialized, [MemGetSize, INITSTATE ] > 0 ] // this avoid run code on startp of zbrush
 
 
-[If, ! [MemGetSize, INIT_STATE ]
+[If, ! [MemGetSize, INITSTATE ]
 ,
 	/* DEFINE MEMORY BLOCKS */
-	[MVarDef, INIT_STATE,	1 ]
-	[MVarDef, CURRENT_STATE,	1 ]
+	[MVarDef, INITSTATE,	1 ]
+	[MVarDef, CURRENTSTATE,	1 ]
 
 	/* SET DEFAULTS */
-	[MVarSet, INIT_STATE,	0, [Var, INIT_STATE] ]
-	[MVarSet, CURRENT_STATE,	0, [Var, INIT_STATE] ]
+	[MVarSet, INITSTATE,	0, [Var, INITSTATE] ]
+	[MVarSet, CURRENTSTATE,	0, [Var, INITSTATE] ]
 ]
 
 
 /*  UI */
-[VarSet, PLUGIN_NENU, "~CONFIG_TEST"]
+[VarSet, PLUGINNENU, "~CONFIGTEST"]
 
-[IPalette, PLUGIN_NENU ]
+[IPalette, PLUGINNENU ]
 
-[VarSet, switch_button, [StrMerge, PLUGIN_NENU, ":", "Switch"] ]
+[VarSet, switchbutton, [StrMerge, PLUGINNENU, ":", "Switch"] ]
 
 
 /* ----- SWITCH  BUTTON----- */
-[ISwitch, switch_button, [MVarGet, INIT_STATE, 0], ""
+[ISwitch, switchbutton, [MVarGet, INITSTATE, 0], ""
 , // PRESS
 
 	[Note, "Enable",, 0.5]
 
-	[MVarSet, CURRENT_STATE, 0, 1 ]
+	[MVarSet, CURRENTSTATE, 0, 1 ]
 
 , // UNPRESS
 
 	[Note, "Disable",, 0.5]
 
-	[MVarSet, CURRENT_STATE, 0, 0 ]
+	[MVarSet, CURRENTSTATE, 0, 0 ]
 
 ,,,	48]
 
 
 /* FORCE SWITCH TO CORRECT STATE ON FIRST HIT, BUT NOT ON ZBRUSH STARTUP */
-[If, [Var, plugin_initialized] && ([MVarGet, CURRENT_STATE, 0 ] == [MVarGet, INIT_STATE, 0 ])
+[If, [Var, plugininitialized] && ([MVarGet, CURRENTSTATE, 0 ] == [MVarGet, INITSTATE, 0 ])
 , // THEN
-	[ISet,  switch_button, ! [MVarGet, CURRENT_STATE, 0 ]  ]
+	[ISet,  switchbutton, ! [MVarGet, CURRENTSTATE, 0 ]  ]
 ]

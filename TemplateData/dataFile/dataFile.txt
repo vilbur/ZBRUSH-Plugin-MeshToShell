@@ -1,16 +1,16 @@
 
-[VarSet, DATAFILE_SUBMENU, [StrMerge, PLUGIN_NENU, ":", "dataFile"]]
+[VarSet, DATAFILESUBMENU, [StrMerge, PLUGINNENU, ":", "dataFile"]]
 
-[VarSet, CONTROLS_DATAFILE,	[StrMerge, DATAFILE_SUBMENU, ":"]]	// FULL PATH: Menu > Submenu > Control
+[VarSet, CONTROLSDATAFILE,	[StrMerge, DATAFILESUBMENU, ":"]]	// FULL PATH: Menu > Submenu > Control
 
 
 
 
 [VarDef, DATAFILE,	[FileNameResolvePath, "TemplateData\dataFile\config.zvr"] ]
 
-[VarDef, DATA_LIST(1)]
+[VarDef, DATALIST(1)]
 
-[VarDef, VALUE_LOADED]
+[VarDef, VALUELOADED]
 
 
 /** dataFileSave
@@ -18,15 +18,15 @@
   */
 [RoutineDef, dataFileSave
 ,
-	//[Note, PLUGIN_DATA_PATH ]
-	[VarSet, DATA_LIST([Var, index]), value_to_save ]
+	//[Note, PLUGINDATAPATH ]
+	[VarSet, DATALIST([Var, index]), valuetosave ]
 
-	[VarSave, DATA_LIST, DATAFILE ]
+	[VarSave, DATALIST, DATAFILE ]
 
-	[Note, [StrMerge, "dataFile.configSave \n\nIndex: ", index, "\n\nValue: ",  value_to_save ],, 0]
+	[Note, [StrMerge, "dataFile.configSave \n\nIndex: ", index, "\n\nValue: ",  valuetosave ],, 0]
 
 , // PARAMS
-	index, value_to_save
+	index, valuetosave
 ]
 //[IButton, "dataFileSave()" , "", [RoutineCall, dataFileSave, 0, "Test value"] ]
 
@@ -36,11 +36,11 @@
   */
 [RoutineDef, dataFileLoad
 ,
-	[VarLoad, DATA_LIST, DATAFILE ]
+	[VarLoad, DATALIST, DATAFILE ]
 
-	[VarSet, VALUE_LOADED, [Var, DATA_LIST([Var, index]) ] ]
+	[VarSet, VALUELOADED, [Var, DATALIST([Var, index]) ] ]
 
-	//[Note, VALUE_LOADED ]
+	//[Note, VALUELOADED ]
 
 , // PARAMS
 	index
@@ -55,10 +55,10 @@
 ,
 	[If, [FileExists, DATAFILE]
 	, // THEN
-		[VarLoad, DATA_LIST, DATAFILE ]
+		[VarLoad, DATALIST, DATAFILE ]
 
 	, // ELSE
-		[VarSave, DATA_LIST, DATAFILE]
+		[VarSave, DATALIST, DATAFILE]
 	]
 ]
 //[IButton, "dataFileInit()" , "", [RoutineCall, dataFileInit ] ]
@@ -66,11 +66,11 @@
 [RoutineCall, dataFileInit ]
 
 
-[ISubPalette,  DATAFILE_SUBMENU ]
+[ISubPalette,  DATAFILESUBMENU ]
 
-[IButton,  [StrMerge, CONTROLS_DATAFILE, "Get Data"],	"",	[RoutineCall, dataFileInit ][Note, [Var, DATA_LIST(0)] ], ,,,,	48]
-[IButton,  [StrMerge, CONTROLS_DATAFILE, "Load Config"],	"",	[RoutineCall, dataFileLoad, 0 ][Note, VALUE_LOADED] , ,,,,	48]
+[IButton,  [StrMerge, CONTROLSDATAFILE, "Get Data"],	"",	[RoutineCall, dataFileInit ][Note, [Var, DATALIST(0)] ], ,,,,	48]
+[IButton,  [StrMerge, CONTROLSDATAFILE, "Load Config"],	"",	[RoutineCall, dataFileLoad, 0 ][Note, VALUELOADED] , ,,,,	48]
 
-[IButton,  [StrMerge, CONTROLS_DATAFILE, "Config Set 0"],	"",	[RoutineCall, dataFileSave, 0, 0 ] , ,,,,	48]
-[IButton,  [StrMerge, CONTROLS_DATAFILE, "Config Set 1"],	"",	[RoutineCall, dataFileSave, 0, 1 ] , ,,,,	48]
-[IButton,  [StrMerge, CONTROLS_DATAFILE, "Config Set 2"],	"",	[RoutineCall, dataFileSave, 0, 2 ] , ,,,,	48]
+[IButton,  [StrMerge, CONTROLSDATAFILE, "Config Set 0"],	"",	[RoutineCall, dataFileSave, 0, 0 ] , ,,,,	48]
+[IButton,  [StrMerge, CONTROLSDATAFILE, "Config Set 1"],	"",	[RoutineCall, dataFileSave, 0, 1 ] , ,,,,	48]
+[IButton,  [StrMerge, CONTROLSDATAFILE, "Config Set 2"],	"",	[RoutineCall, dataFileSave, 0, 2 ] , ,,,,	48]

@@ -1,25 +1,25 @@
 /**
   *
   */
-[VarSet, PLUGIN_NAME, 	"TEMPLATE"]
-[VarSet, PLUGIN_SUBMENU, 	"TemplateSubmenu"]
+[VarSet, PLUGINNAME, 	"TEMPLATE"]
+[VarSet, PLUGINSUBMENU, 	"TemplateSubmenu"]
 
 
-[VarSet, PLUGIN_NENU,	[StrMerge, "~", PLUGIN_NAME ]]
-[VarSet, PLUGIN_DATA_PATH,	[FileNameResolvePath, [StrMerge, PLUGIN_NAME, "Data" ]]]
-
-
-
-//[VarSet, CONTROLS_PATH,	[StrMerge, PLUGIN_NENU, ":", PLUGIN_SUBMENU, ":"]]	// FULL PATH: Menu > Submenu > Control
-[VarSet, CONTROLS_PATH,	[StrMerge, PLUGIN_NENU, ":"]]	// MENU PATH: Menu > Submenu > Control
-//[VarSet, CONTROLS_PATH,	"" ]	// DEV controls in script pane
-
-
-[VarSet, ZFILE_UTILS_DLL, [StrMerge, PLUGIN_DATA_PATH, "\\ZFileUtils64.dll"] ]
+[VarSet, PLUGINNENU,	[StrMerge, "~", PLUGINNAME ]]
+[VarSet, PLUGINDATAPATH,	[FileNameResolvePath, [StrMerge, PLUGINNAME, "Data" ]]]
 
 
 
-[IPalette,  PLUGIN_NENU ]
+//[VarSet, CONTROLSPATH,	[StrMerge, PLUGINNENU, ":", PLUGINSUBMENU, ":"]]	// FULL PATH: Menu > Submenu > Control
+[VarSet, CONTROLSPATH,	[StrMerge, PLUGINNENU, ":"]]	// MENU PATH: Menu > Submenu > Control
+//[VarSet, CONTROLSPATH,	"" ]	// DEV controls in script pane
+
+
+[VarSet, ZFILEUTILSDLL, [StrMerge, PLUGINDATAPATH, "\\ZFileUtils64.dll"] ]
+
+
+
+[IPalette,  PLUGINNENU ]
 
 
 /* zscriptinsert COMMAND IS EXECUTED EVEN IF IS COMENTED - It is divided to 2 lines because of that
