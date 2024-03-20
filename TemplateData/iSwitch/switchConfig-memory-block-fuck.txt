@@ -19,12 +19,12 @@
 */
 
 /* INIT STATE OF SWITCH */
-[VarSet, $INIT_STATE, 0 ]
-//[VarSet, $INIT_STATE, 1 ]
+[VarSet, INIT_STATE, 0 ]
+//[VarSet, INIT_STATE, 1 ]
 
-[VarDef, $CONFIGFILE,	[FileNameResolvePath, "TemplateData\iSwitch\switchConfig.zvr"] ]
+[VarDef, CONFIGFILE,	[FileNameResolvePath, "TemplateData\iSwitch\switchConfig.zvr"] ]
 
-[VarDef, $plugin_initialized, [MemGetSize, INIT_STATE ] > 0 ] // this avoid run code on startp of zbrush
+[VarDef, plugin_initialized, [MemGetSize, INIT_STATE ] > 0 ] // this avoid run code on startp of zbrush
 
 
 /** saveConfig
@@ -32,9 +32,9 @@
 //[RoutineDef, saveConfig
 //,
 //	//[Note, "saveConfig"]
-//	[Var, $error, [MemSaveToFile, CURRENT_STATE, $CONFIGFILE, 1]]
+//	[Var, error, [MemSaveToFile, CURRENT_STATE, CONFIGFILE, 1]]
 //
-//	[Note, [StrMerge, "error,: ", [Var, $error ] ]
+//	[Note, [StrMerge, "error,: ", [Var, error ] ]
 //
 //]
 //[IButton, "saveConfig()" , "", [RoutineCall, saveConfig] ]
@@ -47,47 +47,47 @@
 	[MVarDef, CURRENT_STATE,	1 ]
 
 	/* SET DEFAULTS */
-	[MVarSet, INIT_STATE,	0, [Var, $INIT_STATE] ]
-	[MVarSet, CURRENT_STATE,	0, [Var, $INIT_STATE] ]
+	[MVarSet, INIT_STATE,	0, [Var, INIT_STATE] ]
+	[MVarSet, CURRENT_STATE,	0, [Var, INIT_STATE] ]
 
-	[If, ! [FileExists, $CONFIGFILE]
+	[If, ! [FileExists, CONFIGFILE]
 	, // THEN
 
-		[MemSaveToFile, INIT_STATE, $CONFIGFILE, 1]
+		[MemSaveToFile, INIT_STATE, CONFIGFILE, 1]
 		//[RoutineCall, saveConfig]
 	]
 
-	[MemCreateFromFile, INIT_STATE,	$CONFIGFILE ]
-	[MemCreateFromFile, CURRENT_STATE,	$CONFIGFILE ]
+	[MemCreateFromFile, INIT_STATE,	CONFIGFILE ]
+	[MemCreateFromFile, CURRENT_STATE,	CONFIGFILE ]
 
 ]
 
 
 
 /*  UI */
-[VarSet, $PLUGIN_NENU, "~CONFIG_TEST"]
+[VarSet, PLUGIN_NENU, "~CONFIG_TEST"]
 
-[IPalette, $PLUGIN_NENU ]
+[IPalette, PLUGIN_NENU ]
 
-[VarSet, $switch_button, [StrMerge, $PLUGIN_NENU, ":", "Switch"] ]
-[VarSet, $init_button, [StrMerge, $PLUGIN_NENU, ":", "Init"] ]
+[VarSet, switch_button, [StrMerge, PLUGIN_NENU, ":", "Switch"] ]
+[VarSet, init_button, [StrMerge, PLUGIN_NENU, ":", "Init"] ]
 
 
-[IButton, $init_button, "Tooltip"
+[IButton, init_button, "Tooltip"
 ,
 	//Commands
 
 ,	/*Disabled*/,	/*Width*/,	/*Hotkey*/,	/*Icon*/,	/*Height*/]
 
 /* ----- SWITCH  BUTTON----- */
-[ISwitch, $switch_button, [MVarGet, INIT_STATE, 0], ""
+[ISwitch, switch_button, [MVarGet, INIT_STATE, 0], ""
 , // PRESS
 
 	[Note, "Enable",, 0.5]
 
 	[MVarSet, CURRENT_STATE, 0, 1 ]
 	//[RoutineCall, saveConfig]
-	[MemSaveToFile, CURRENT_STATE, $CONFIGFILE, 1]
+	[MemSaveToFile, CURRENT_STATE, CONFIGFILE, 1]
 
 , // UNPRESS
 
@@ -97,29 +97,29 @@
 
 	//[RoutineCall, saveConfig]
 
-	[MemSaveToFile, CURRENT_STATE, $CONFIGFILE, 1]
+	[MemSaveToFile, CURRENT_STATE, CONFIGFILE, 1]
 
 ,,,	48]
 
 
 /* FORCE SWITCH TO CORRECT STATE ON FIRST HIT, BUT NOT ON ZBRUSH STARTUP */
-[If, [Var, $plugin_initialized] && ([MVarGet, CURRENT_STATE, 0 ] == [MVarGet, INIT_STATE, 0 ])
+[If, [Var, plugin_initialized] && ([MVarGet, CURRENT_STATE, 0 ] == [MVarGet, INIT_STATE, 0 ])
 , // THEN
-	[ISet,  $switch_button, ! [MVarGet, CURRENT_STATE, 0 ]  ]
+	[ISet,  switch_button, ! [MVarGet, CURRENT_STATE, 0 ]  ]
 ]
 
 
 
-[IButton, [StrMerge, $PLUGIN_NENU, ":", "GET VALUE"], ""
+[IButton, [StrMerge, PLUGIN_NENU, ":", "GET VALUE"], ""
 ,
 
 	[MVarDef, TEST_STATE,	1 ]
 
-	//[MVarSet, TEST_STATE,	0, [IGet, $switch_button ] ]
+	//[MVarSet, TEST_STATE,	0, [IGet, switch_button ] ]
 
 	//[Note, [MVarGet, TEST_STATE, 0 ],, 0]
 
-	[MemCreateFromFile, TEST_STATE,	$CONFIGFILE ]
+	[MemCreateFromFile, TEST_STATE,	CONFIGFILE ]
 
 	[Note, [MVarGet, TEST_STATE, 0 ],, 0]
 

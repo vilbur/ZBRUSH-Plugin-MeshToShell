@@ -20,11 +20,11 @@
 
 
 /* INIT STATE OF SWITCH */
-[VarSet, $INIT_STATE, 0 ]
-//[VarSet, $INIT_STATE, 1 ]
+[VarSet, INIT_STATE, 0 ]
+//[VarSet, INIT_STATE, 1 ]
 
 
-[VarDef, $plugin_initialized, [MemGetSize, INIT_STATE ] > 0 ] // this avoid run code on startp of zbrush
+[VarDef, plugin_initialized, [MemGetSize, INIT_STATE ] > 0 ] // this avoid run code on startp of zbrush
 
 
 [If, ! [MemGetSize, INIT_STATE ]
@@ -34,21 +34,21 @@
 	[MVarDef, CURRENT_STATE,	1 ]
 
 	/* SET DEFAULTS */
-	[MVarSet, INIT_STATE,	0, [Var, $INIT_STATE] ]
-	[MVarSet, CURRENT_STATE,	0, [Var, $INIT_STATE] ]
+	[MVarSet, INIT_STATE,	0, [Var, INIT_STATE] ]
+	[MVarSet, CURRENT_STATE,	0, [Var, INIT_STATE] ]
 ]
 
 
 /*  UI */
-[VarSet, $PLUGIN_NENU, "~CONFIG_TEST"]
+[VarSet, PLUGIN_NENU, "~CONFIG_TEST"]
 
-[IPalette, $PLUGIN_NENU ]
+[IPalette, PLUGIN_NENU ]
 
-[VarSet, $switch_button, [StrMerge, $PLUGIN_NENU, ":", "Switch"] ]
+[VarSet, switch_button, [StrMerge, PLUGIN_NENU, ":", "Switch"] ]
 
 
 /* ----- SWITCH  BUTTON----- */
-[ISwitch, $switch_button, [MVarGet, INIT_STATE, 0], ""
+[ISwitch, switch_button, [MVarGet, INIT_STATE, 0], ""
 , // PRESS
 
 	[Note, "Enable",, 0.5]
@@ -65,7 +65,7 @@
 
 
 /* FORCE SWITCH TO CORRECT STATE ON FIRST HIT, BUT NOT ON ZBRUSH STARTUP */
-[If, [Var, $plugin_initialized] && ([MVarGet, CURRENT_STATE, 0 ] == [MVarGet, INIT_STATE, 0 ])
+[If, [Var, plugin_initialized] && ([MVarGet, CURRENT_STATE, 0 ] == [MVarGet, INIT_STATE, 0 ])
 , // THEN
-	[ISet,  $switch_button, ! [MVarGet, CURRENT_STATE, 0 ]  ]
+	[ISet,  switch_button, ! [MVarGet, CURRENT_STATE, 0 ]  ]
 ]

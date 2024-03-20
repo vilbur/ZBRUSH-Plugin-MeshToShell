@@ -12,29 +12,29 @@
 
 [IPalette, "~SWITCHTEST"]
 
-[VarDef, $disbaled, 0] // ENABLED ON INIT
-[VarSet, $disbaled, 1] // DISABLED ON INIT
+[VarDef, disbaled, 0] // ENABLED ON INIT
+[VarSet, disbaled, 1] // DISABLED ON INIT
 
-[VarDef, $it_works, 0]
+[VarDef, it_works, 0]
 
 
 [If, [IExists, "~SWITCHTEST:SwitchTest" ],
 
-   [If, [IGet, "~SWITCHTEST:SwitchTest" ] == [Var, $disbaled]
+   [If, [IGet, "~SWITCHTEST:SwitchTest" ] == [Var, disbaled]
    , // THEN
 	   [Note, "IT WORKS",, 1]
 
-	   [VarSet, $it_works, 1]
+	   [VarSet, it_works, 1]
    , // ELSE
 
 	   [Note, "IT IS BROKEN",, 1]
 
-	   [VarSet, $it_works, 0]
+	   [VarSet, it_works, 0]
    ]
 ]
 
 
-[ISwitch, "~SWITCHTEST:SwitchTest", [Var, $disbaled], ""
+[ISwitch, "~SWITCHTEST:SwitchTest", [Var, disbaled], ""
 ,
 	[Note, "Enable",, 0.5]
 ,
@@ -44,7 +44,7 @@
 
 
 
-[If, ! [Var, $it_works]
+[If, ! [Var, it_works]
 , // THEN FORCE ISWITCH TO DESIRED STATE
 	[ISet, "~SWITCHTEST:SwitchTest", ! [IGet, "~SWITCHTEST:SwitchTest" ] ]
 ]
