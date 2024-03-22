@@ -1,7 +1,223 @@
 
 
+/* getThicknessInMilimeters
+*/
+[RoutineDef, getThicknessInMilimeters
+, /* function */
 
-[RoutineDef,gAllSubToolsBoundingBox,
+	[VarSet, xyzsize, 0]
+	[VarSet, xsize, 0]
+	[VarSet, ysize, 0]
+	[VarSet, zsize, 0]
+
+	[RoutineCall, getAllSubToolsBoundingBox,3 ,xyzsize,xsize,ysize,zsize]
+
+	//[Note, [StrMerge,
+	//	"xsize: ", xsize, "\n\n",
+	//	"ysize: ", ysize, "\n\n",
+	//	"zsize: ", zsize
+	//]]
+
+	/* FIND WHICH AXIS HAS HIGHEST VALUE*/
+	[If, xsize > ysize, // THEN
+		[VarSet, maxSize, xsize ], // ELSE
+		[VarSet, maxSize, ysize ]]
+
+	[If, zsize > maxSize, // THEN
+		[VarSet, maxSize,zsizexsize ] ]
+
+
+	/* GET TOOL SIZE IN MILIMETERS */
+	[VarSet, milimetersSize, [IGet, Tool:Export:scale] * maxSize  ]
+
+
+	[VarSet, thickness, 1 / milimetersSize * 2 ] // scale * size in mm * 2 becasue of twho sides of object
+
+, /* parameters or thickness */
+
+	thickness
+]
+
+
+/** copySOuceObjectAndDecimate
+  */
+[RoutineDef, copySouceObjectAndDecimate
+,
+	//[Note, "copySouceObjectAndDecimate"]
+	[VarSet, preprocessCurrent, "C:\\GoogleDrive\\ProgramsData\\CG\\ZBrush\\Plugins\\INSTALLED\\ToolLoader\\ToolLoaderData\\Ahk\\preprocessCurrent.ahk"]
+
+	[IPress,Tool:SubTool:Duplicate]
+
+	[RoutineCall, renameSubtool, "Shell-Source"]
+
+	[VarSet, deciamtePercent, 20]
+
+	[ISet, "Zplugin:Decimation Master:% of decimation", [Var, deciamtePercent] ]
+
+	/* AHK LAUNCHED BELLOW WORKS ONLY IF SCRIPT IS CRUNNING FROM PLUGIN PALLETE, DOESN'T WORK IF LAUNCHED FROM SCRIPT PANE */
+	//[VarSet, waitFoPreprocessAndExecuteDecimation, "C:\\GoogleDrive\\ProgramsData\\CG\\ZBrush\\Plugins\\INSTALLED\\ToolLoader\\ToolLoaderData\\Ahk\\waitFoPreprocessAndExecuteDecimation.ahk"]
+	[VarSet, waitFoPreprocessAndExecuteDecimation,  [StrMerge, PLUGINDATAPATH, "\\Ahk\\waitFoPreprocessAndExecuteDecimation.ahk"]]
+
+	//[FileExecute, ZFILEUTILSDLL, "LaunchAppWithFile",  #preprocessCurrent]
+	[FileExecute, ZFILEUTILSDLL, "LaunchAppWithFile",  #waitFoPreprocessAndExecuteDecimation]
+
+//, // PARAMS
+
+]
+
+/** zRemeshSubtool
+  */
+[RoutineDef, zRemeshSubtool
+,
+	//[Note, "zRemeshSubtool"]
+	[IPress,Tool:Geometry:Double]
+
+	[IPress,Tool:Geometry:Adapt]
+
+	[IUnPress,Tool:Geometry:Same]
+
+	[IUnPress,Tool:Geometry:Half]
+
+	[IUnPress,Tool:Geometry:FreezeBorder]
+
+	[IUnPress,Tool:Geometry:KeepGroups]
+
+	//[FileNameSetNext,"C:\Users\Public\Documents/ZBrushData2022/Temp/objIn.goz"]
+	[IPress,Tool:Geometry:ZRemesher]
+////, // PARAMS
+
+]
+
+
+/** extractShell
+  */
+[RoutineDef, extractShell
+,
+	//[Note, "extractShell"]
+	[VarSet, SubtoolActiveInex, [SubToolGetActiveIndex]]
+	[VarSet, countBeforeExplode, [SubToolGetCount]]
+
+
+
+	[Loop, [SubToolGetCount],
+		[RoutineCall, subtoolVisibility,  i, 0 ]
+
+	, i]
+
+	[RoutineCall, subtoolVisibility, SubtoolActiveInex - 1, 1 ]
+
+	[SubToolSelect, SubtoolActiveInex ]
+
+
+	[IPress,Tool:Polygroups:GroupVisible]
+
+	[IPress,Tool:SubTool:Extract]
+	[IPress,Tool:SubTool:Accept]
+
+	[RoutineCall, renameSubtool, "Shell-Extracted"]
+
+	//[IPress,Tool:Polygroups:Auto Groups]
+
+
+	[IKeyPress, '2', [IPress, Tool:Subtool:Groups Split]]
+
+
+	[VarSet, explodedSubtoolsCount, [SubToolGetCount] - countBeforeExplode ]
+
+	[SubToolSelect, SubtoolActiveInex ]
+
+	[Loop, explodedSubtoolsCount,
+
+
+		//[Note, [IGetTitle, "Tool:Current Tool"],, 0]
+
+		[IKeyPress,'2',[IPress, Tool:SubTool:Delete]] // 2: Ok 3: always ok
+
+	,i]
+
+
+
+	[VarSet, innerExtractedSubtool, [StrMerge, "Tool:SubTool:", [IGetTitle, Tool:Current Tool ]]]
+	[VarSet,wid,[IWidth,innerExtractedSubtool]]
+	[IClick,innerExtractedSubtool,wid-75,5] // Set boolean substract
+
+
+
+	[SubToolSelect, [SubToolGetActiveIndex] - 1 ]
+	[VarSet, subtoolShellSource, [StrMerge, "Tool:SubTool:", [IGetTitle, Tool:Current Tool ]]]
+	[VarSet,wid,[IWidth,subtoolShellSource]]
+	[IClick, subtoolShellSource  ,wid-100,5] //Set Boolean Add
+
+
+////, // PARAMS
+
+]
+
+/* liveBooleanOn
+*/
+[RoutineDef, liveBooleanOn
+, /* function */
+
+
+
+	[IUnPress,Transform: Pf]
+	[IUnPress,Transform:Solo]
+	//[CanvasStroke,(ZObjStrokeV03n3%p45AD8A8p3F31468PN-1NNs17F407Cs17F407Cs17F407Cz8000=
+	//H183V4BCH183V4BCH183V4BC)]
+	[IPress,Render:Render Booleans:Live Boolean]
+
+]
+
+
+/* subtoolVisibility
+*/
+[RoutineDef, subtoolVisibility
+, /* function */
+
+	[VarSet, SubtoolActiveInex, [SubToolGetActiveIndex]]
+
+	[If, #state != 0, // THEN
+		[VarSet, press, 34], // ELSE
+		[VarSet, press, 2]]
+
+
+		[SubToolSelect, index ]
+
+        [VarSet, subtoolName, [IGetTitle, "Tool:Current Tool"]]
+		[VarSet, subtoolControl, [StrMerge, "Tool:SubTool:", subtoolName] ]
+
+		[IModSet,subtoolControl, press]
+
+		[SubToolSelect, SubtoolActiveInex ]
+
+,
+	index, state /* 0|1 */
+]
+
+/* RENAME SUBTOOL
+*/
+[RoutineDef, renameSubtool
+,
+	//[RoutineCall, CheckSystem]
+
+	[VarSet, button_path, "Tool:SubTool:Rename"]
+	//set button_path to the button you want
+	//"Tool:SubTool:Rename" - for SubTool
+	//"Tool:Layers:Rename" - for Layers
+	//"Preferences:Transpose Units:Set Units" - for Transpose Units
+	[If, (([IExists, button_path]) && ([IsEnabled, button_path])),
+	  [FileExecute, [Var, ZFILEUTILSDLL], RenameSetNext, new_name]
+	  [IPress, button_path]
+	]
+,
+	/* parameters */
+	new_name
+]
+
+/* Get Bounding Box of all|visible subtools
+
+*/
+[RoutineDef,getAllSubToolsBoundingBox,
 
 	[VarSet, xmin, 0]
 	[VarSet, ymin, 0]
@@ -25,103 +241,3 @@
   	[VarSet,xyzsize,MAX(xyzsize,zsize)]
 
 ,visibleonly,xyzsize,xsize,ysize,zsize]
-
-/** copySOuceObjectAndDecimate
-  */
-[RoutineDef, copySouceObjectAndDecimate
-,
-	//[Note, "copySouceObjectAndDecimate"]
-	//[VarSet, preprocessCurrent, "C:\\GoogleDrive\\ProgramsData\\CG\\ZBrush\\Plugins\\INSTALLED\\ToolLoader\\ToolLoaderData\\Ahk\\preprocessCurrent.ahk"]
-
-	[IPress, Tool:Subtool:Duplicate ]
-
-	[VarSet, deciamtePercent, 20]
-
-	[ISet, "Zplugin:Decimation Master:% of decimation", [Var, deciamtePercent] ]
-
-	/* AHK LAUNCHED BELLOW WORKS ONLY IF SCRIPT IS CRUNNING FROM PLUGIN PALLETE, DOESN'T WORK IF LAUNCHED FROM SCRIPT PANE */
-	[VarSet, waitFoPreprocessAndExecuteDecimation, "C:\\GoogleDrive\\ProgramsData\\CG\\ZBrush\\Plugins\\INSTALLED\\ToolLoader\\ToolLoaderData\\Ahk\\waitFoPreprocessAndExecuteDecimation.ahk"]
-
-	//[FileExecute, ZFILEUTILSDLL, "LaunchAppWithFile",  #preprocessCurrent]
-	[FileExecute, ZFILEUTILSDLL, "LaunchAppWithFile",  #waitFoPreprocessAndExecuteDecimation]
-
-, // PARAMS
-
-]
-
-/** zRemeshSubtool
-  */
-[RoutineDef, zRemeshSubtool
-,
-	//[Note, "zRemeshSubtool"]
-	[IPress,Tool:Geometry:Double]
-
-	[IPress,Tool:Geometry:Adapt]
-
-	[IUnPress,Tool:Geometry:Same]
-
-	[IUnPress,Tool:Geometry:Half]
-
-	[IUnPress,Tool:Geometry:FreezeBorder]
-
-	[IUnPress,Tool:Geometry:KeepGroups]
-
-	//[FileNameSetNext,"C:\Users\Public\Documents/ZBrushData2022/Temp/objIn.goz"]
-	[IPress,Tool:Geometry:ZRemesher]
-, // PARAMS
-
-]
-//[IButton, "zRemeshSubtool()" , "", [RoutineCall, zRemeshSubtool] ]
-
-
-/** extractShell
-  */
-[RoutineDef, extractShell
-,
-	//[Note, "extractShell"]
-	[VarSet, SubtoolActiveInex, [SubToolGetActiveIndex]]
-
-	[RoutineCall, copySouceObjectAndDecimate]
-
-	[VarSet, SubtoolDecimated, [SubToolGetActiveIndex]]
-
-	[VarSet, xyzsize, 0]
-	[VarSet, xsize, 0]
-	[VarSet, ysize, 0]
-	[VarSet, zsize, 0]
-
-	[RoutineCall, gAllSubToolsBoundingBox,1 ,xyzsize,xsize,ysize,zsize]
-
-	[Note, [StrMerge,
-		"xsize: ", xsize, "\n\n",
-		"ysize: ", ysize, "\n\n",
-		"zsize: ", zsize
-	]]
-
-
-	[If, xsize > ysize, // THEN
-		[VarSet, maxSize, xsize ], // ELSE
-		[VarSet, maxSize, ysize ]]
-
-
-
-	[If, zsize > maxSize, // THEN
-		[VarSet, maxSize,zsizexsize ] ]
-
-
-	//[VarSet, milimetersSize,  [IGet, Tool:Export:scale]  * 2 ]
-	[VarSet, milimetersSize, [IGet, Tool:Export:scale] * maxSize  ]
-	[VarSet, thickness, 1 / milimetersSize * 2 ] // scale * size in mm * 2 becasue of twho sides of object
-
-	//[Note, [StrMerge, "milimetersSize: ", milimetersSize ] ]
-	//[Note, [StrMerge, "thickness: ", thickness ] ]
-
-
-	[ISet,Tool:SubTool:Thick, thickness ]
-	[IPress,Tool:SubTool:Extract]
-
-
-, // PARAMS
-
-]
-//[IButton, "extractShell()" , "", [RoutineCall, extractShell] ]

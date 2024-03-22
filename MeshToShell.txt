@@ -2,7 +2,7 @@
   *
   */
 [VarSet, PLUGINNAME, 	"MeshToShell"]
-[VarSet, PLUGINSUBMENU, 	"MeshToShellSubmenu"]
+[VarSet, PLUGINSUBMENU, 	"Extract Shell"]
 
 
 [VarSet, PLUGINNENU,	[StrMerge, "~", PLUGINNAME ]]
@@ -14,7 +14,7 @@
 
 	PRODUCTION: CONTROLS IN MENU, use this path to place controls in bmenu: PluginMenu > Control
 
-	[VarSet, CONTROLSPATH,	[StrMerge, PLUGINNENU, ":", PLUGINSUBMENU, ":"]]
+	[VarSet, CONTROLSPATH,	[StrMerge, PLUGINNENU, ":"]]
 
 --------------------------------------------------------------------------------*/
 
@@ -23,11 +23,10 @@
 
 	PRODUCTION: CONTROLS IN SUBMENU, use this path to place controls in submenu: Menu > Submenu > Control
 
-	[VarSet, CONTROLSPATH,	[StrMerge, PLUGINNENU, ":"]]
 
 --------------------------------------------------------------------------------*/
+	[VarSet, CONTROLSPATH,	[StrMerge, PLUGINNENU, ":", PLUGINSUBMENU, ":"]]
 
-[VarSet, CONTROLSPATH,	[StrMerge, PLUGINNENU, ":"]]
 
 
 /*------------------------------------------------------------------------------
@@ -49,5 +48,6 @@
 [IPalette,  PLUGINNENU ]
 
 
+<zscriptinsert, "MeshToShellData/routines.txt">
 <zscriptinsert, "MeshToShellData/UI-MeshToShell.txt">
-
+<zscriptinsert, "MeshToShellData/UI-Testing.txt">
