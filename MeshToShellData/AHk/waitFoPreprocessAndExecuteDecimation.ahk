@@ -1,14 +1,56 @@
 #SingleInstance force
+/** Execute hotkey in ZBRUSH
+ */
+;sendHotkeyToZbrsuh ($hotkey)
+;{
+;
+;	;;MsgBox,262144,TEST, executeKeyboardShortcutInZbrush,3
+;
+;	MsgBox,262144,hotkey, %$hotkey%,3
+;
+;	;if( $zbrush_window	:= WinExist( "ahk_exe ZBrush.exe" ) )
+;	;{
+;	;	WinActivate, ahk_exe ZBrush.exe
+;	;
+;	;	/*
+;	;		Execute command "~VIL-PLUGINS:MaxZbrushSync:Max to Zbrush" in "../../Zbrush/MaxZbrushSync.txt"
+;	;	*/
+;	;	;Send, {Ctrl Down}{Shift Down}{F8}{Ctrl Up}{Shift Up}
+;	;	Send, %$hotkey%
+;	;}
+;}
+/**
+ */
+sendHotkeyToZbrsuh( $key_shortcut )
+{
+	;MsgBox,262144,par, %par%,3
+	;MsgBox,262144,"key_shortcut", %$key_shortcut%,3
+
+	if( $zbrush_window	:= WinExist( "ahk_exe ZBrush.exe" ) )
+	{
+		WinActivate, ahk_exe ZBrush.exe
+
+		/*
+			Execute command "~VIL-PLUGINS:MaxZbrushSync:Max to Zbrush" in "../../Zbrush/MaxZbrushSync.txt"
+		*/
+		;Send, {Ctrl Down}{Shift Down}{F8}{Ctrl Up}{Shift Up}
+		Send, %$key_shortcut%
+	}
+}
 
 /**
  */
 getFileCount( $path )
 {
+	;$path := "c:\\Users\\Public\\Documents\\ZBrushData2022\\ZPluginData\\DecimationMasterData"
+	count = 0
 
-	loop, % $path
-		$file_count := A_Index
+	Loop, % $path "\\*.zpm", 1, 0
+		 count++
 
-	return % $file_count
+	;MsgBox,262144,count, %count%,3
+
+	return % count
 }
 
 
@@ -20,7 +62,7 @@ waitForFileCountChanged()
 
 ;	While ! FileExist( "C:\Filename.ext" )
 ;  Sleep 250
-	$zbrush_decimationmaster_path := "c:\Users\Public\Documents\ZBrushData2022\ZPluginData\DecimationMasterData\*.*"
+	$zbrush_decimationmaster_path := "c:\Users\Public\Documents\ZBrushData2022\ZPluginData\DecimationMasterData"
 
 
 	$file_count_start := getFileCount( $zbrush_decimationmaster_path )
@@ -44,46 +86,6 @@ waitForFileCountChanged()
 	return % $counter != $timeout
 }
 
-/** Execute hotkey in ZBRUSH
- */
-executeDecimateCurrent()
-{
-
-	;MsgBox,262144,TEST, executeKeyboardShortcutInZbrush,3
-
-	if( $zbrush_window	:= WinExist( "ahk_exe ZBrush.exe" ) )
-	{
-		WinActivate, ahk_exe ZBrush.exe
-
-		sleep 2000 ;;; long sleep is needed; 1500 doesn't work sometimes
-		;sleep 500 ;;; long sleep is needed; 1500 doesn't work sometimes
-
-		/*
-			Execute command "~VIL-PLUGINS:MaxZbrushSync:Max to Zbrush" in "../../Zbrush/MaxZbrushSync.txt"
-		*/
-		Send, {Ctrl Down}{Shift Down}{F9}{Ctrl Up}{Shift Up}
-	}
-}
-
-
-/** Execute hotkey in ZBRUSH
- */
-preprocessCurrent()
-{
-
-	;;MsgBox,262144,TEST, executeKeyboardShortcutInZbrush,3
-
-	if( $zbrush_window	:= WinExist( "ahk_exe ZBrush.exe" ) )
-	{
-		WinActivate, ahk_exe ZBrush.exe
-
-		/*
-			Execute command "~VIL-PLUGINS:MaxZbrushSync:Max to Zbrush" in "../../Zbrush/MaxZbrushSync.txt"
-		*/
-		Send, {Ctrl Down}{Shift Down}{F8}{Ctrl Up}{Shift Up}
-	}
-}
-
 /*
 
 /** EXECUTE
@@ -92,17 +94,29 @@ preprocessCurrent()
 sleep 500
 
 
-preprocessCurrent()
-
-;sleep 3000
+/* preprocess Current tool for decimation
+*/
+sendHotkeyToZbrsuh("{Ctrl Down}{Shift Down}{F8}{Ctrl Up}{Shift Up}")
 
 
 
 if( waitForFileCountChanged() )
-	executeDecimateCurrent()
+{
+	sleep 2000 ;;; long sleep is needed; 1500 doesn't work sometimes
 
+	;MsgBox,262144,variable, "Precocess Done",3
+
+	/* execute Decimate Current Tool
+	*/
+	sendHotkeyToZbrsuh("{Ctrl Down}{Shift Down}{F9}{Ctrl Up}{Shift Up}")
+
+	/* CONTINUE AFTER DECIMATION
+
+		DISABLE LINE BELOW FORSTEP BY STEP TESTING
+	*/
+	sleep 2000 ;;;
+	sendHotkeyToZbrsuh("{Ctrl Down}{Shift Down}{F7}{Ctrl Up}{Shift Up}")
+
+}
 else
 	MsgBox,262144, waitFoPreprocessAndExecuteDecimation.ahk, File count does not changed in folder:`n`n "Users\Public\...\ZPluginData\DecimationMasterData"
-
-
-;executeDecimateCurrent()

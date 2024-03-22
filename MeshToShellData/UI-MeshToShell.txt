@@ -3,7 +3,7 @@
 	[ISubPalette, [StrMerge, PLUGINNENU, ":", PLUGINSUBMENU ]]]
 
 
-[ISlider, [StrMerge, CONTROLSPATH,"Thickness"], 0.1, 0.1, 0.1, 10, "Set Extraction thickness in milimeters"
+[ISlider, [StrMerge, CONTROLSPATH,"Thickness"], 0.1, 0.1, 1.5, 10, "Set Extraction thickness in milimeters"
 ,
 	//Commands
 	[VarSet, thicknessOfMilimeter, 0]
@@ -19,12 +19,31 @@
 ,	/*Disabled*/,	190/*Width*/,	32]
 
 
+[IButton,  [StrMerge, CONTROLSPATH, "Get Tool Size"], "Get Tool Size",
+	//[RoutineCall, copySouceObjectAndDecimate]
+
+	[VarSet, maxSize, 0]
+
+	[RoutineCall, getBboxMaxSize,  maxSize]
+
+	/* GET TOOL SIZE IN MILIMETERS */
+	[VarSet, milimetersSize, [IGet, Tool:Export:scale] * maxSize  ]
+
+	[Note,
+		[StrMerge, "Total max size of all subtoools:\n\n", milimetersSize, "mm"]
+
+	 ,, 0]
+
+,/*Disabled*/, 190 ,/*Hotkey*/,/*Icon*/,96]
+
+
+
 [IButton,  [StrMerge, CONTROLSPATH, "Set 1 mm"], "",
 	//[RoutineCall, copySouceObjectAndDecimate]
 
 	[ISet, [StrMerge, CONTROLSPATH,"Thickness"], 1]
 
-,/*Disabled*/, 2048 ,/*Hotkey*/,/*Icon*/,96]
+,/*Disabled*/, 190 ,/*Hotkey*/,/*Icon*/,96]
 
 
 [IButton,  [StrMerge, CONTROLSPATH, "+ 0.1"], "",
@@ -34,4 +53,40 @@
 
 	[ISet, ThicknessSlider, [IGet,ThicknessSlider] + 0.1]
 
-,/*Disabled*/, 2048 ,/*Hotkey*/,/*Icon*/,96]
+,/*Disabled*/, 190 ,/*Hotkey*/,/*Icon*/,96]
+
+[IButton,  [StrMerge, CONTROLSPATH, "- 0.1"], "",
+	//[RoutineCall, copySouceObjectAndDecimate]
+
+	[VarSet, ThicknessSlider, [StrMerge, CONTROLSPATH,"Thickness"]]
+
+	[ISet, ThicknessSlider, [IGet,ThicknessSlider] - 0.1]
+
+,/*Disabled*/, 190 ,/*Hotkey*/,/*Icon*/,96]
+
+[IButton,  [StrMerge, CONTROLSPATH, "CREATE SHELL"], "",
+
+	[IPress,Transform:Solo]
+	[IPress,Transform: Pf]
+
+
+	[RoutineCall, copySouceObjectAndDecimate]
+
+
+,/*Disabled*/, 190 ,/*Hotkey*/,/*Icon*/,96]
+
+
+[IButton,  [StrMerge, CONTROLSPATH, "Slicer Box"], "Append Box scaled by tool in substraction mode",
+	[RoutineCall, appendSlicerBox]
+,/*Disabled*/, 190 ,/*Hotkey*/,/*Icon*/,96]
+
+
+
+[IButton,  [StrMerge, CONTROLSPATH, "HOTKEY REQUIRED continue after decimation"], "Continue after decimation\n\nTHIS BUTTON MUST HOKEY ASSIGNED",
+
+	[RoutineCall, zRemeshSubtool]
+	[RoutineCall, extractShell]
+	[RoutineCall, liveBooleanOn]
+
+,/*Disabled*/, 190 ,  /*Hotkey*/,/*Icon*/,24]
+

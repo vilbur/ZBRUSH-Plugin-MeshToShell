@@ -1,52 +1,11 @@
-
-
-/* getThicknessInMilimeters
-*/
-[RoutineDef, getThicknessInMilimeters
-, /* function */
-
-	[VarSet, xyzsize, 0]
-	[VarSet, xsize, 0]
-	[VarSet, ysize, 0]
-	[VarSet, zsize, 0]
-
-	[RoutineCall, getAllSubToolsBoundingBox,3 ,xyzsize,xsize,ysize,zsize]
-
-	//[Note, [StrMerge,
-	//	"xsize: ", xsize, "\n\n",
-	//	"ysize: ", ysize, "\n\n",
-	//	"zsize: ", zsize
-	//]]
-
-	/* FIND WHICH AXIS HAS HIGHEST VALUE*/
-	[If, xsize > ysize, // THEN
-		[VarSet, maxSize, xsize ], // ELSE
-		[VarSet, maxSize, ysize ]]
-
-	[If, zsize > maxSize, // THEN
-		[VarSet, maxSize,zsizexsize ] ]
-
-
-	/* GET TOOL SIZE IN MILIMETERS */
-	[VarSet, milimetersSize, [IGet, Tool:Export:scale] * maxSize  ]
-
-
-	[VarSet, thickness, 1 / milimetersSize * 2 ] // scale * size in mm * 2 becasue of twho sides of object
-
-, /* parameters or thickness */
-
-	thickness
-]
-
-
 /** copySOuceObjectAndDecimate
   */
 [RoutineDef, copySouceObjectAndDecimate
 ,
 	//[Note, "copySouceObjectAndDecimate"]
-	[VarSet, preprocessCurrent, "C:\\GoogleDrive\\ProgramsData\\CG\\ZBrush\\Plugins\\INSTALLED\\ToolLoader\\ToolLoaderData\\Ahk\\preprocessCurrent.ahk"]
 
 	[IPress,Tool:SubTool:Duplicate]
+
 
 	[RoutineCall, renameSubtool, "Shell-Source"]
 
@@ -70,6 +29,8 @@
 [RoutineDef, zRemeshSubtool
 ,
 	//[Note, "zRemeshSubtool"]
+	[IPress,Transform:Solo]
+
 	[IPress,Tool:Geometry:Double]
 
 	[IPress,Tool:Geometry:Adapt]
@@ -88,13 +49,13 @@
 
 ]
 
-
 /** extractShell
   */
 [RoutineDef, extractShell
 ,
-	//[Note, "extractShell"]
-	[VarSet, SubtoolActiveInex, [SubToolGetActiveIndex]]
+
+	[VarSet, sourceTool, [SubToolGetActiveIndex] - 1] // decimated copy of source objject
+	[VarSet, subtoolDecimated, [SubToolGetActiveIndex]] // decimated copy of source objject
 	[VarSet, countBeforeExplode, [SubToolGetCount]]
 
 
@@ -104,9 +65,13 @@
 
 	, i]
 
-	[RoutineCall, subtoolVisibility, SubtoolActiveInex - 1, 1 ]
+	[SubToolSelect, sourceTool ]
+	[VarSet, sourceToolName, [FileNameExtract, [GetActiveToolPath], 2]]
 
-	[SubToolSelect, SubtoolActiveInex ]
+
+	[RoutineCall, subtoolVisibility, subtoolDecimated - 1, 1 ]
+
+	[SubToolSelect, subtoolDecimated ]
 
 
 	[IPress,Tool:Polygroups:GroupVisible]
@@ -114,7 +79,7 @@
 	[IPress,Tool:SubTool:Extract]
 	[IPress,Tool:SubTool:Accept]
 
-	[RoutineCall, renameSubtool, "Shell-Extracted"]
+	[RoutineCall, renameSubtool, [StrMerge, sourceToolName, "-INNER"] ]
 
 	//[IPress,Tool:Polygroups:Auto Groups]
 
@@ -124,7 +89,7 @@
 
 	[VarSet, explodedSubtoolsCount, [SubToolGetCount] - countBeforeExplode ]
 
-	[SubToolSelect, SubtoolActiveInex ]
+	[SubToolSelect, subtoolDecimated ]
 
 	[Loop, explodedSubtoolsCount,
 
@@ -134,7 +99,6 @@
 		[IKeyPress,'2',[IPress, Tool:SubTool:Delete]] // 2: Ok 3: always ok
 
 	,i]
-
 
 
 	[VarSet, innerExtractedSubtool, [StrMerge, "Tool:SubTool:", [IGetTitle, Tool:Current Tool ]]]
@@ -157,67 +121,20 @@
 */
 [RoutineDef, liveBooleanOn
 , /* function */
-
-
-
 	[IUnPress,Transform: Pf]
 	[IUnPress,Transform:Solo]
 	//[CanvasStroke,(ZObjStrokeV03n3%p45AD8A8p3F31468PN-1NNs17F407Cs17F407Cs17F407Cz8000=
 	//H183V4BCH183V4BCH183V4BC)]
 	[IPress,Render:Render Booleans:Live Boolean]
-
 ]
 
 
-/* subtoolVisibility
+/* Append slicer box
 */
-[RoutineDef, subtoolVisibility
+[RoutineDef, appendSlicerBox
 , /* function */
 
-	[VarSet, SubtoolActiveInex, [SubToolGetActiveIndex]]
-
-	[If, #state != 0, // THEN
-		[VarSet, press, 34], // ELSE
-		[VarSet, press, 2]]
-
-
-		[SubToolSelect, index ]
-
-        [VarSet, subtoolName, [IGetTitle, "Tool:Current Tool"]]
-		[VarSet, subtoolControl, [StrMerge, "Tool:SubTool:", subtoolName] ]
-
-		[IModSet,subtoolControl, press]
-
-		[SubToolSelect, SubtoolActiveInex ]
-
-,
-	index, state /* 0|1 */
-]
-
-/* RENAME SUBTOOL
-*/
-[RoutineDef, renameSubtool
-,
-	//[RoutineCall, CheckSystem]
-
-	[VarSet, button_path, "Tool:SubTool:Rename"]
-	//set button_path to the button you want
-	//"Tool:SubTool:Rename" - for SubTool
-	//"Tool:Layers:Rename" - for Layers
-	//"Preferences:Transpose Units:Set Units" - for Transpose Units
-	[If, (([IExists, button_path]) && ([IsEnabled, button_path])),
-	  [FileExecute, [Var, ZFILEUTILSDLL], RenameSetNext, new_name]
-	  [IPress, button_path]
-	]
-,
-	/* parameters */
-	new_name
-]
-
-/* Get Bounding Box of all|visible subtools
-
-*/
-[RoutineDef,getAllSubToolsBoundingBox,
+	[VarSet, maxSize, 2]
 
 	[VarSet, xmin, 0]
 	[VarSet, ymin, 0]
@@ -226,18 +143,50 @@
 	[VarSet, ymax, -1]
 	[VarSet, zmax, -1]
 
-	[If,visibleonly,
-		[VarSet,Opt,2]
-	,
-		[VarSet,Opt,3]
+	[Mesh3DGet, 2, 2,, xmin, ymin, zmin, xmax, ymax, zmax]
+
+
+
+	[VarDef,toolID,0]
+	[VarSet,toolID,[IGet,Tool:Item Info]]
+
+	[IPress,Tool:Cube3D]
+
+	//store the new OBJ tool name
+	[VarSet,toolName,[IGetTitle,Tool:Current Tool,0]]
+
+	//select the main OBJ ztool
+	[ISet,Tool:ItemInfo,#toolID]
+	//append the new OBJ
+	[If,[IExists,Tool:SubTool:Append],
+		[IPress,Tool:SubTool:Append]
+		[IPress,[StrMerge,"PopUp:",[Var,toolName]]]
 	]
 
-	// Get bounding box of all Subtools
-	[Mesh3DGet, 2, Opt,, xmin, ymin, zmin, xmax, ymax, zmax]
-	[VarSet,xsize,ABS(xmin-xmax)]
-  	[VarSet,ysize,ABS(ymin-ymax)]
-  	[VarSet,zsize,ABS(zmin-zmax)]
-  	[VarSet,xyzsize,MAX(xsize,ysize)]
-  	[VarSet,xyzsize,MAX(xyzsize,zsize)]
+	[SubToolSelect, [SubToolGetCount] - 1 ]
 
-,visibleonly,xyzsize,xsize,ysize,zsize]
+
+	[ISet,Tool:Geometry:XYZ Size, maxSize ]
+	[ISet,Tool:Geometry:Y Size, maxSize / 4 ]
+
+
+	[ISet,Tool:Geometry:Y Position,  ymax ]
+
+	[VarSet,subtoolPath,[StrMerge,"Tool:Subtool:", [IGetTitle,"Tool:Current Tool"]]]
+//
+	//[If,(2 & [IModGet,subtoolPath]) != 2,
+		[VarSet,wid,[IWidth,subtoolPath]]
+
+	[IClick,subtoolPath,wid-75,5]
+
+
+	/* TURN POLYFRAME ON IF LIVE BOLLEAN IS ACTIVE */
+	[If, [IGet,Render:Render Booleans:Live Boolean], // THEN
+		[IPress,Transform: Pf]]
+
+
+	[IPress,Transform:Fit]
+
+	[IPress,Transform:Move]
+
+]

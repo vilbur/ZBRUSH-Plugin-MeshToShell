@@ -1,0 +1,118 @@
+
+/* getBboxMAxSize
+*/
+[RoutineDef, getBboxMaxSize
+, /* function */
+	[VarSet, xyzsize, 0]
+	[VarSet, xsize, 0]
+	[VarSet, ysize, 0]
+	[VarSet, zsize, 0]
+
+	[RoutineCall, getAllSubToolsBoundingBox,3 ,xyzsize,xsize,ysize,zsize]
+
+
+	/* FIND WHICH AXIS HAS HIGHEST VALUE*/
+	[If, xsize > ysize, // THEN
+		[VarSet, maxSize, xsize ], // ELSE
+		[VarSet, maxSize, ysize ]]
+
+	[If, zsize > maxSize, // THEN
+		[VarSet, maxSize,zsizexsize ] ]
+
+
+, /* parameters or output */
+	maxSize
+]
+
+/* getThicknessInMilimeters
+*/
+[RoutineDef, getThicknessInMilimeters
+, /* function */
+
+	[VarSet, maxSize, 0]
+
+	[RoutineCall, getBboxMaxSize,  maxSize]
+
+	/* GET TOOL SIZE IN MILIMETERS */
+	[VarSet, milimetersSize, [IGet, Tool:Export:scale] * maxSize  ]
+
+
+	[VarSet, thickness, 1 / milimetersSize * 2 ] // scale * size in mm * 2 becasue of twho sides of object
+
+, /* parameters or thickness */
+
+	thickness
+]
+
+/* subtoolVisibility
+*/
+[RoutineDef, subtoolVisibility
+, /* function */
+
+	[VarSet, SubtoolActiveInex, [SubToolGetActiveIndex]]
+
+	[If, #state != 0, // THEN
+		[VarSet, press, 34], // ELSE
+		[VarSet, press, 2]]
+
+
+		[SubToolSelect, index ]
+
+        [VarSet, subtoolName, [IGetTitle, "Tool:Current Tool"]]
+		[VarSet, subtoolControl, [StrMerge, "Tool:SubTool:", subtoolName] ]
+
+		[IModSet,subtoolControl, press]
+
+		[SubToolSelect, SubtoolActiveInex ]
+
+,
+	index, state /* 0|1 */
+]
+
+/* RENAME SUBTOOL
+*/
+[RoutineDef, renameSubtool
+,
+	//[RoutineCall, CheckSystem]
+
+	[VarSet, button_path, "Tool:SubTool:Rename"]
+	//set button_path to the button you want
+	//"Tool:SubTool:Rename" - for SubTool
+	//"Tool:Layers:Rename" - for Layers
+	//"Preferences:Transpose Units:Set Units" - for Transpose Units
+	[If, (([IExists, button_path]) && ([IsEnabled, button_path])),
+	  [FileExecute, [Var, ZFILEUTILSDLL], RenameSetNext, new_name]
+	  [IPress, button_path]
+	]
+,
+	/* parameters */
+	new_name
+]
+
+/* Get Bounding Box of all|visible subtools
+
+*/
+[RoutineDef,getAllSubToolsBoundingBox,
+
+	[VarSet, xmin, 0]
+	[VarSet, ymin, 0]
+	[VarSet, zmin, 0]
+	[VarSet, xmax, -1]
+	[VarSet, ymax, -1]
+	[VarSet, zmax, -1]
+
+	[If,visibleonly,
+		[VarSet,Opt,2]
+	,
+		[VarSet,Opt,3]
+	]
+
+	// Get bounding box of all Subtools
+	[Mesh3DGet, 2, Opt,, xmin, ymin, zmin, xmax, ymax, zmax]
+	[VarSet,xsize,ABS(xmin-xmax)]
+  	[VarSet,ysize,ABS(ymin-ymax)]
+  	[VarSet,zsize,ABS(zmin-zmax)]
+  	[VarSet,xyzsize,MAX(xsize,ysize)]
+  	[VarSet,xyzsize,MAX(xyzsize,zsize)]
+
+,visibleonly,xyzsize,xsize,ysize,zsize]

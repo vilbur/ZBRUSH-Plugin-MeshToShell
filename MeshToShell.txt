@@ -49,5 +49,6 @@
 
 
 <zscriptinsert, "MeshToShellData/routines.txt">
+<zscriptinsert, "MeshToShellData/routines-help.txt">
 <zscriptinsert, "MeshToShellData/UI-MeshToShell.txt">
 <zscriptinsert, "MeshToShellData/UI-Testing.txt">
