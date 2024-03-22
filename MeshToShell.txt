@@ -1,0 +1,53 @@
+/**
+  *
+  */
+[VarSet, PLUGINNAME, 	"MeshToShell"]
+[VarSet, PLUGINSUBMENU, 	"MeshToShellSubmenu"]
+
+
+[VarSet, PLUGINNENU,	[StrMerge, "~", PLUGINNAME ]]
+[VarSet, PLUGINDATAPATH,	[FileNameResolvePath, [StrMerge, PLUGINNAME, "Data" ]]]
+
+
+
+/*------------------------------------------------------------------------------
+
+	PRODUCTION: CONTROLS IN MENU, use this path to place controls in bmenu: PluginMenu > Control
+
+	[VarSet, CONTROLSPATH,	[StrMerge, PLUGINNENU, ":", PLUGINSUBMENU, ":"]]
+
+--------------------------------------------------------------------------------*/
+
+
+/*------------------------------------------------------------------------------
+
+	PRODUCTION: CONTROLS IN SUBMENU, use this path to place controls in submenu: Menu > Submenu > Control
+
+	[VarSet, CONTROLSPATH,	[StrMerge, PLUGINNENU, ":"]]
+
+--------------------------------------------------------------------------------*/
+
+[VarSet, CONTROLSPATH,	[StrMerge, PLUGINNENU, ":"]]
+
+
+/*------------------------------------------------------------------------------
+
+	DEVELOPMENT: use this to show buttons in script pane, allow to be roladed on development
+
+	[VarSet, CONTROLSPATH,	"" ]
+
+--------------------------------------------------------------------------------*/
+
+	//[VarSet, CONTROLSPATH,	"" ]
+
+
+
+[VarSet, ZFILEUTILSDLL, [StrMerge, PLUGINDATAPATH, "\ZFileUtils64.dll"] ]
+
+
+
+[IPalette,  PLUGINNENU ]
+
+
+<zscriptinsert, "MeshToShellData/UI-MeshToShell.txt">
+

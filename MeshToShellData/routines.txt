@@ -1,0 +1,127 @@
+
+
+
+[RoutineDef,gAllSubToolsBoundingBox,
+
+	[VarSet, xmin, 0]
+	[VarSet, ymin, 0]
+	[VarSet, zmin, 0]
+	[VarSet, xmax, -1]
+	[VarSet, ymax, -1]
+	[VarSet, zmax, -1]
+
+	[If,visibleonly,
+		[VarSet,Opt,2]
+	,
+		[VarSet,Opt,3]
+	]
+
+	// Get bounding box of all Subtools
+	[Mesh3DGet, 2, Opt,, xmin, ymin, zmin, xmax, ymax, zmax]
+	[VarSet,xsize,ABS(xmin-xmax)]
+  	[VarSet,ysize,ABS(ymin-ymax)]
+  	[VarSet,zsize,ABS(zmin-zmax)]
+  	[VarSet,xyzsize,MAX(xsize,ysize)]
+  	[VarSet,xyzsize,MAX(xyzsize,zsize)]
+
+,visibleonly,xyzsize,xsize,ysize,zsize]
+
+/** copySOuceObjectAndDecimate
+  */
+[RoutineDef, copySouceObjectAndDecimate
+,
+	//[Note, "copySouceObjectAndDecimate"]
+	//[VarSet, preprocessCurrent, "C:\\GoogleDrive\\ProgramsData\\CG\\ZBrush\\Plugins\\INSTALLED\\ToolLoader\\ToolLoaderData\\Ahk\\preprocessCurrent.ahk"]
+
+	[IPress, Tool:Subtool:Duplicate ]
+
+	[VarSet, deciamtePercent, 20]
+
+	[ISet, "Zplugin:Decimation Master:% of decimation", [Var, deciamtePercent] ]
+
+	/* AHK LAUNCHED BELLOW WORKS ONLY IF SCRIPT IS CRUNNING FROM PLUGIN PALLETE, DOESN'T WORK IF LAUNCHED FROM SCRIPT PANE */
+	[VarSet, waitFoPreprocessAndExecuteDecimation, "C:\\GoogleDrive\\ProgramsData\\CG\\ZBrush\\Plugins\\INSTALLED\\ToolLoader\\ToolLoaderData\\Ahk\\waitFoPreprocessAndExecuteDecimation.ahk"]
+
+	//[FileExecute, ZFILEUTILSDLL, "LaunchAppWithFile",  #preprocessCurrent]
+	[FileExecute, ZFILEUTILSDLL, "LaunchAppWithFile",  #waitFoPreprocessAndExecuteDecimation]
+
+, // PARAMS
+
+]
+
+/** zRemeshSubtool
+  */
+[RoutineDef, zRemeshSubtool
+,
+	//[Note, "zRemeshSubtool"]
+	[IPress,Tool:Geometry:Double]
+
+	[IPress,Tool:Geometry:Adapt]
+
+	[IUnPress,Tool:Geometry:Same]
+
+	[IUnPress,Tool:Geometry:Half]
+
+	[IUnPress,Tool:Geometry:FreezeBorder]
+
+	[IUnPress,Tool:Geometry:KeepGroups]
+
+	//[FileNameSetNext,"C:\Users\Public\Documents/ZBrushData2022/Temp/objIn.goz"]
+	[IPress,Tool:Geometry:ZRemesher]
+, // PARAMS
+
+]
+//[IButton, "zRemeshSubtool()" , "", [RoutineCall, zRemeshSubtool] ]
+
+
+/** extractShell
+  */
+[RoutineDef, extractShell
+,
+	//[Note, "extractShell"]
+	[VarSet, SubtoolActiveInex, [SubToolGetActiveIndex]]
+
+	[RoutineCall, copySouceObjectAndDecimate]
+
+	[VarSet, SubtoolDecimated, [SubToolGetActiveIndex]]
+
+	[VarSet, xyzsize, 0]
+	[VarSet, xsize, 0]
+	[VarSet, ysize, 0]
+	[VarSet, zsize, 0]
+
+	[RoutineCall, gAllSubToolsBoundingBox,1 ,xyzsize,xsize,ysize,zsize]
+
+	[Note, [StrMerge,
+		"xsize: ", xsize, "\n\n",
+		"ysize: ", ysize, "\n\n",
+		"zsize: ", zsize
+	]]
+
+
+	[If, xsize > ysize, // THEN
+		[VarSet, maxSize, xsize ], // ELSE
+		[VarSet, maxSize, ysize ]]
+
+
+
+	[If, zsize > maxSize, // THEN
+		[VarSet, maxSize,zsizexsize ] ]
+
+
+	//[VarSet, milimetersSize,  [IGet, Tool:Export:scale]  * 2 ]
+	[VarSet, milimetersSize, [IGet, Tool:Export:scale] * maxSize  ]
+	[VarSet, thickness, 1 / milimetersSize * 2 ] // scale * size in mm * 2 becasue of twho sides of object
+
+	//[Note, [StrMerge, "milimetersSize: ", milimetersSize ] ]
+	//[Note, [StrMerge, "thickness: ", thickness ] ]
+
+
+	[ISet,Tool:SubTool:Thick, thickness ]
+	[IPress,Tool:SubTool:Extract]
+
+
+, // PARAMS
+
+]
+//[IButton, "extractShell()" , "", [RoutineCall, extractShell] ]
