@@ -114,8 +114,8 @@ if( waitForFileCountChanged() )
 
 		DISABLE LINE BELOW FORSTEP BY STEP TESTING
 	*/
-	sleep 2000 ;;;
-	sendHotkeyToZbrsuh("{Ctrl Down}{Shift Down}{F7}{Ctrl Up}{Shift Up}")
+	;sleep 2000 ;;;
+	;sendHotkeyToZbrsuh("{Ctrl Down}{Shift Down}{F7}{Ctrl Up}{Shift Up}")
 
 }
 else

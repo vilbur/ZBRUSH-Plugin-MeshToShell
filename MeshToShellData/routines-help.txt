@@ -44,6 +44,27 @@
 	thickness
 ]
 
+/**
+  *
+  */
+[RoutineDef, SubToolIsVisible,
+
+	[VarSet, isVisible, 0]
+	[VarSet,st,[SubToolGetStatus,id]]
+	[VarSet,fInd,[SubToolGetFolderIndex,id]]
+
+	[If,(fInd > -1),//it's in a folder
+
+		[VarSet,stFld,[SubToolGetStatus,fInd]]//get folder visibility
+
+		[If,([Val,stFld]&0x2 == 0x2)&&([Val,st]&0x1 == 0x1), [VarSet,isVisible,1] ] , //else no folder
+
+		[If,([Val,st]&0x1 == 0x1), [VarSet,isVisible,1] ]
+	]
+
+ ,isVisible,id
+]
+
 /* subtoolVisibility
 */
 [RoutineDef, subtoolVisibility
@@ -84,10 +105,31 @@
 	  [FileExecute, [Var, ZFILEUTILSDLL], RenameSetNext, new_name]
 	  [IPress, button_path]
 	]
-,
-	/* parameters */
+, /* parameters */
 	new_name
 ]
+
+/* set boolean mode 'Add' on curren subtool
+*/
+[RoutineDef, setBooleanAdd
+,
+	[SubToolSelect, [SubToolGetActiveIndex] - 1 ]
+	[VarSet, subtoolShellSource, [StrMerge, "Tool:SubTool:", [IGetTitle, Tool:Current Tool ]]]
+	[VarSet,wid,[IWidth,subtoolShellSource]]
+	[IClick, subtoolShellSource  ,wid-100,5] //Set Boolean Add
+
+]
+
+/* set boolean mode 'Subrstract' on curren subtool
+*/
+[RoutineDef, setBooleanSubstract
+,
+	[VarSet, innerExtractedSubtool, [StrMerge, "Tool:SubTool:", [IGetTitle, Tool:Current Tool ]]]
+	[VarSet,wid,[IWidth,innerExtractedSubtool]]
+	[IClick,innerExtractedSubtool,wid-75,5] // Set boolean substract
+]
+
+
 
 /* Get Bounding Box of all|visible subtools
 

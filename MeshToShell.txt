@@ -1,13 +1,24 @@
-/**
-  *
-  */
+
+/*------------------------------------------------------------------------------
+	SET PLUGIN NAME
+--------------------------------------------------------------------------------*/
 [VarSet, PLUGINNAME, 	"MeshToShell"]
-[VarSet, PLUGINSUBMENU, 	"Extract Shell"]
 
-
+/*------------------------------------------------------------------------------
+	SET MENU NAME
+--------------------------------------------------------------------------------*/
 [VarSet, PLUGINNENU,	[StrMerge, "~", PLUGINNAME ]]
-[VarSet, PLUGINDATAPATH,	[FileNameResolvePath, [StrMerge, PLUGINNAME, "Data" ]]]
 
+/*------------------------------------------------------------------------------
+	DEFINE SUBMENUS
+--------------------------------------------------------------------------------*/
+[VarSet, PLUGINSUBMENU, 	"Extract Shell"]
+[VarSet, TESTINGSUBMENU,	"TEST" ]
+
+/*------------------------------------------------------------------------------
+	PATH TO PLUGIN DATA
+--------------------------------------------------------------------------------*/
+[VarSet, PLUGINDATAPATH,	[FileNameResolvePath, [StrMerge, PLUGINNAME, "Data" ]]]
 
 
 /*------------------------------------------------------------------------------
@@ -24,8 +35,11 @@
 	PRODUCTION: CONTROLS IN SUBMENU, use this path to place controls in submenu: Menu > Submenu > Control
 
 
+	[VarSet, CONTROLSPATH,	[StrMerge, PLUGINNENU, ":", PLUGINSUBMENU, ":"]]
+	[VarSet, CONTROLSTEST,	[StrMerge, PLUGINNENU, ":", TESTINGSUBMENU, ":"]]
 --------------------------------------------------------------------------------*/
 	[VarSet, CONTROLSPATH,	[StrMerge, PLUGINNENU, ":", PLUGINSUBMENU, ":"]]
+	[VarSet, CONTROLSTEST,	[StrMerge, PLUGINNENU, ":", TESTINGSUBMENU, ":"]]
 
 
 
@@ -34,21 +48,31 @@
 	DEVELOPMENT: use this to show buttons in script pane, allow to be roladed on development
 
 	[VarSet, CONTROLSPATH,	"" ]
+	[VarSet, CONTROLSTEST,	"" ]
 
 --------------------------------------------------------------------------------*/
 
 	//[VarSet, CONTROLSPATH,	"" ]
+	//[VarSet, CONTROLSTEST,	"" ]
 
 
 
 [VarSet, ZFILEUTILSDLL, [StrMerge, PLUGINDATAPATH, "\ZFileUtils64.dll"] ]
 
 
+[If, [StrLength, CONTROLSPATH ] > 0, // THEN
+	[IPalette,  PLUGINNENU ]]
 
-[IPalette,  PLUGINNENU ]
+
+<zscriptinsert, "MeshToShellData/extractShell.txt">	// "./MeshToShellData/extractShell.txt"
+<zscriptinsert, "MeshToShellData/routines-help.txt">	// "./MeshToShellData/routines-help.txt"
 
 
-<zscriptinsert, "MeshToShellData/routines.txt">
-<zscriptinsert, "MeshToShellData/routines-help.txt">
-<zscriptinsert, "MeshToShellData/UI-MeshToShell.txt">
-<zscriptinsert, "MeshToShellData/UI-Testing.txt">
+[If, [StrLength, CONTROLSPATH ] > 0, // THEN
+	[ISubPalette, [StrMerge, PLUGINNENU, ":", PLUGINSUBMENU ]]]
+
+<zscriptinsert, "MeshToShellData/UI/Decimation.txt">	// "./MeshToShellData/UI/Decimation.txt"
+<zscriptinsert, "MeshToShellData/UI/Thickness.txt">	// "./MeshToShellData/UI/Thickness.txt"
+<zscriptinsert, "MeshToShellData/UI/UI-extractShell.txt">	// "./MeshToShellData/UI/UI-extractShell.txt"
+
+<zscriptinsert, "MeshToShellData/UI/Testing.txt">	// "./MeshToShellData/UI/Testing.txt"

@@ -45,6 +45,27 @@
 
 	//[FileNameSetNext,"C:\Users\Public\Documents/ZBrushData2022/Temp/objIn.goz"]
 	[IPress,Tool:Geometry:ZRemesher]
+
+	/* HIDE ALL SUBTOOLS */
+	[Loop, [SubToolGetCount],
+		[VarSet,isVis,0]
+		[RoutineCall,SubToolIsVisible,isVis, i ]
+
+		[If, (isVis), //code for visible subtool
+			[RoutineCall, subtoolVisibility, i , 0 ]]
+
+	, i]
+
+	/* SHOW SOURCE  */
+	[RoutineCall, subtoolVisibility, [SubToolGetActiveIndex], 1 ]
+	/* SHOW REMESHED  */
+	[RoutineCall, subtoolVisibility, [SubToolGetActiveIndex] -1 , 1 ]
+	[IPress,Tool:Geometry:Close Holes]
+
+	/* PROJECT DETAILS */
+	[IKeyPress,'2',[IPress,Tool:SubTool:ProjectAll]]
+
+
 ////, // PARAMS
 
 ]
@@ -60,10 +81,6 @@
 
 
 
-	[Loop, [SubToolGetCount],
-		[RoutineCall, subtoolVisibility,  i, 0 ]
-
-	, i]
 
 	[SubToolSelect, sourceTool ]
 	[VarSet, sourceToolName, [FileNameExtract, [GetActiveToolPath], 2]]
@@ -75,6 +92,13 @@
 
 
 	[IPress,Tool:Polygroups:GroupVisible]
+
+
+	[Note,
+
+		[IGet,Tool:SubTool:Thick]
+	 ,, 0]
+
 
 	[IPress,Tool:SubTool:Extract]
 	[IPress,Tool:SubTool:Accept]
@@ -91,27 +115,20 @@
 
 	[SubToolSelect, subtoolDecimated ]
 
+
+
+	/* DELETE OTHER MESHOSES AFTER EXPLODE, ONLY LAST IS LEFT */
 	[Loop, explodedSubtoolsCount,
-
-
-		//[Note, [IGetTitle, "Tool:Current Tool"],, 0]
-
 		[IKeyPress,'2',[IPress, Tool:SubTool:Delete]] // 2: Ok 3: always ok
-
 	,i]
 
 
-	[VarSet, innerExtractedSubtool, [StrMerge, "Tool:SubTool:", [IGetTitle, Tool:Current Tool ]]]
-	[VarSet,wid,[IWidth,innerExtractedSubtool]]
-	[IClick,innerExtractedSubtool,wid-75,5] // Set boolean substract
+	[SubToolSelect, subtoolDecimated ]
+	[RoutineCall, setBooleanSubstract ]
 
 
-
-	[SubToolSelect, [SubToolGetActiveIndex] - 1 ]
-	[VarSet, subtoolShellSource, [StrMerge, "Tool:SubTool:", [IGetTitle, Tool:Current Tool ]]]
-	[VarSet,wid,[IWidth,subtoolShellSource]]
-	[IClick, subtoolShellSource  ,wid-100,5] //Set Boolean Add
-
+	[SubToolSelect, sourceTool ]
+	[RoutineCall, setBooleanAdd ]
 
 ////, // PARAMS
 
@@ -188,5 +205,22 @@
 	[IPress,Transform:Fit]
 
 	[IPress,Transform:Move]
+
+]
+
+
+/* maskByCavity
+*/
+[RoutineDef, maskByCavity
+, /* function */
+
+	[ISet,Tool:Masking:Blur,100]
+	[ISet,Tool:Masking:Intensity,5]
+
+	[IPress,Tool:Masking:Mask By Cavity]
+
+	[IPress,Tool:Masking:Inverse]
+
+//, /* parameters or output */
 
 ]

@@ -1,0 +1,44 @@
+
+/*
+*/
+[IButton,  [StrMerge, CONTROLSPATH, "C R E A T E   S H E L L"], "",
+
+	[IPress,Transform:Solo]
+	[IPress,Transform: Pf]
+	[IPress,Tool:SubTool:V8]
+
+	[RoutineCall, copySouceObjectAndDecimate]
+
+,/*Disabled*/, 190 ,/*Hotkey*/,/*Icon*/,48]
+
+
+
+[ISwitch,[StrMerge, CONTROLSPATH,"——— MANUAL EXECUTION ———"],1,"DO NOTHING,JUST LABEL",,,/*Initially Disabled*/,196,18,]
+
+
+[IButton,  [StrMerge, CONTROLSPATH, "Step 1 Copy And Decimate"], "REST OF METHOSDS IS FIRED AFTER DECIMATION in waitFoPreprocessAndExecuteDecimation.ahk\n\nDISABLE LINE 'CONTINUE AFTER DECIMATION' FOR METHODS TEST STEP BY STEP",
+
+	[IPress,Transform: Pf]
+	[IPress,Transform:Solo]
+	[RoutineCall, copySouceObjectAndDecimate]
+
+,/*Disabled*/, 196 ,/*Hotkey*/,/*Icon*/,48]
+
+/*
+*/
+[IButton,  [StrMerge, CONTROLSPATH, "Step 2 RemeshSubtool"], "",
+	[RoutineCall, zRemeshSubtool]
+	[IPress,Tool:SubTool:ProjectAll]
+,/*Disabled*/, 196 ,/*Hotkey*/,/*Icon*/,48]
+
+
+[IButton,  [StrMerge, CONTROLSPATH, "Step 3 Extract Shell"], "",
+	[RoutineCall, extractShell]
+,/*Disabled*/, 196 ,/*Hotkey*/,/*Icon*/,48]
+
+
+[IButton,  [StrMerge, CONTROLSPATH, "Step 5 Live Boolean On"], "",
+
+	[RoutineCall, liveBooleanOn ]
+
+,/*Disabled*/, 196 ,/*Hotkey*/,/*Icon*/,48]

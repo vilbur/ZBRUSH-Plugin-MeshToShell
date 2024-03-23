@@ -1,10 +1,38 @@
+[If, [StrLength, CONTROLSPATH ] > 0, // THEN
+	[ISubPalette, [StrMerge, PLUGINNENU, ":", TESTINGSUBMENU ]]]
 
 
-[VarSet, TESTINGSUBMENU, [StrMerge, PLUGINNENU, ":", "TESTING" ]]
-[ISubPalette, TESTINGSUBMENU]
+[IButton,  [StrMerge, CONTROLSTEST, "Get Tool Size"], "Get Tool Size",
+	//[RoutineCall, copySouceObjectAndDecimate]
+
+	[VarSet, maxSize, 0]
+
+	[RoutineCall, getBboxMaxSize,  maxSize]
+
+	/* GET TOOL SIZE IN MILIMETERS */
+	[VarSet, milimetersSize, [IGet, Tool:Export:scale] * maxSize  ]
+
+	[Note,
+		[StrMerge, "Total max size of all subtoools:\n\n", milimetersSize, "mm"]
+
+	 ,, 0]
+
+,/*Disabled*/, 190 ,/*Hotkey*/,/*Icon*/, 32]
 
 
-[IButton,  [StrMerge, TESTINGSUBMENU, ":PREPARE SCENE"], "",
+[IButton,  [StrMerge, CONTROLSTEST, "Mask By Cavity"], "Append Box scaled by tool in substraction mode",
+	[RoutineCall, maskByCavity]
+,/*Disabled*/, 190/2 ,/*Hotkey*/,/*Icon*/, 32]
+
+
+[IButton,  [StrMerge, CONTROLSTEST, "Slicer Box"], "Append Box scaled by tool in substraction mode",
+	[RoutineCall, appendSlicerBox]
+,/*Disabled*/, 190/2 ,/*Hotkey*/,/*Icon*/, 32]
+
+
+
+
+[IButton,  [StrMerge, CONTROLSTEST, "CREATE TEST SCENE"], "",
 
 
 	[IKeyPress, 78,[IPress, Document:New Document]]
@@ -42,34 +70,16 @@
 	//[IPress,Tool:Make PolyMesh3D]
 	[IShow,Tool][IClick, Tool:SubTool,  1 ] // open menu
 
-,/*Disabled*/, 2048 ,/*Hotkey*/,/*Icon*/,96]
+,/*Disabled*/, 190 ,/*Hotkey*/,/*Icon*/,48]
 
 
 
+[IButton,  [StrMerge, CONTROLSTEST, "HOTKEY REQUIRED continue after decimation"], "Continue after decimation\n\nTHIS BUTTON MUST HOKEY ASSIGNED\n\nCTRL+SHift+F7",
 
-[IButton,  [StrMerge, TESTINGSUBMENU, ":1 copySouceObjectAndDecimate"], "REST OF METHOSDS IS FIRED AFTER DECIMATION in waitFoPreprocessAndExecuteDecimation.ahk\n\nDISABLE LINE 'CONTINUE AFTER DECIMATION' FOR METHODS TEST STEP BY STEP",
-
-	[RoutineCall, copySouceObjectAndDecimate]
-
-
-,/*Disabled*/, 2048 ,/*Hotkey*/,/*Icon*/,96]
-
-/*
-*/
-[IButton,  [StrMerge, TESTINGSUBMENU, ":2 zRemeshSubtool"], "",
 	[RoutineCall, zRemeshSubtool]
-	[IPress,Tool:SubTool:ProjectAll]
-,/*Disabled*/, 2048 ,/*Hotkey*/,/*Icon*/,96]
-
-
-[IButton,  [StrMerge, TESTINGSUBMENU, ":3 extractShell"], "",
 	[RoutineCall, extractShell]
-,/*Disabled*/, 2048 ,/*Hotkey*/,/*Icon*/,96]
+	[RoutineCall, liveBooleanOn]
 
+	[IPress,Tool:SubTool:V1]
 
-[IButton,  [StrMerge, TESTINGSUBMENU, ":4 liveBooleanOn"], "",
-
-	[RoutineCall, liveBooleanOn ]
-
-,/*Disabled*/, 2048 ,/*Hotkey*/,/*Icon*/,96]
-
+,/*Disabled*/, 190 ,  /*Hotkey*/,/*Icon*/,32]
