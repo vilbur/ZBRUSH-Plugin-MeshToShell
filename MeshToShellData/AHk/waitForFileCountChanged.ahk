@@ -1,24 +1,7 @@
 #SingleInstance force
-/** Execute hotkey in ZBRUSH
- */
-;sendHotkeyToZbrsuh ($hotkey)
-;{
-;
-;	;;MsgBox,262144,TEST, executeKeyboardShortcutInZbrush,3
-;
-;	MsgBox,262144,hotkey, %$hotkey%,3
-;
-;	;if( $zbrush_window	:= WinExist( "ahk_exe ZBrush.exe" ) )
-;	;{
-;	;	WinActivate, ahk_exe ZBrush.exe
-;	;
-;	;	/*
-;	;		Execute command "~VIL-PLUGINS:MaxZbrushSync:Max to Zbrush" in "../../Zbrush/MaxZbrushSync.txt"
-;	;	*/
-;	;	;Send, {Ctrl Down}{Shift Down}{F8}{Ctrl Up}{Shift Up}
-;	;	Send, %$hotkey%
-;	;}
-;}
+
+
+
 /**
  */
 sendHotkeyToZbrsuh( $key_shortcut )
@@ -38,20 +21,6 @@ sendHotkeyToZbrsuh( $key_shortcut )
 	}
 }
 
-/**
- */
-getFileCount( $path )
-{
-	;$path := "c:\\Users\\Public\\Documents\\ZBrushData2022\\ZPluginData\\DecimationMasterData"
-	count = 0
-
-	Loop, % $path "\\*.zpm", 1, 0
-		 count++
-
-	;MsgBox,262144,count, %count%,3
-
-	return % count
-}
 
 
 
@@ -68,7 +37,7 @@ waitForFileCountChanged()
 	$file_count_start := getFileCount( $zbrush_decimationmaster_path )
 
 	$timeout	:= 3000
-	$timeout	:= 120 * 1000
+	$timeout	:= 300 * 1000 ;;; TIME LILMIT 300s = 5 min
 	$tick     := 100
 	$counter	:= 0
 
@@ -85,8 +54,29 @@ waitForFileCountChanged()
 
 	return % $counter != $timeout
 }
+/**
+ */
+getFileCount( $path )
+{
+	;$path := "c:\\Users\\Public\\Documents\\ZBrushData2022\\ZPluginData\\DecimationMasterData"
+	count = 0
 
-/*
+	Loop, % $path "\\*.zpm", 1, 0
+		 count++
+
+	;MsgBox,262144,count, %count%,3
+
+	return % count
+}
+
+/* IF TRUE THEN NEXT COMMAMND AFTER DECIMATION IS EXECUTED
+
+*/
+$CONTINUE	= %1%
+
+;MsgBox,262144,CONTINUE, %$CONTINUE%,3
+
+
 
 /** EXECUTE
   *
@@ -114,9 +104,12 @@ if( waitForFileCountChanged() )
 
 		DISABLE LINE BELOW FORSTEP BY STEP TESTING
 	*/
-	;sleep 2000 ;;;
-	;sendHotkeyToZbrsuh("{Ctrl Down}{Shift Down}{F7}{Ctrl Up}{Shift Up}")
+	if( $CONTINUE	 )
+	{
+		sleep 2000 ;;;
+		sendHotkeyToZbrsuh("{Ctrl Down}{Shift Down}{F7}{Ctrl Up}{Shift Up}")
+	}
 
 }
 else
-	MsgBox,262144, waitFoPreprocessAndExecuteDecimation.ahk, File count does not changed in folder:`n`n "Users\Public\...\ZPluginData\DecimationMasterData"
+	MsgBox,262144, waitFoPreprocessAndExecuteDecimation.ahk, Time limit waiting for decimation is up:`n`n "Users\Public\...\ZPluginData\DecimationMasterData"

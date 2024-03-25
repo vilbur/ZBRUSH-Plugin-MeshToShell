@@ -1,0 +1,111 @@
+[If, [StrLength, CONTROLSHELPERS ] > 0, // THEN
+	[ISubPalette, [StrMerge, PLUGINNENU, ":", HELPERSSUBMENU ]]]
+
+
+/* LABEL */
+//[ISwitch,[StrMerge, CONTROLSHELPERS,"--- HELPERS ---"],1,"HANDY FUNCTIONS BELLOW",,,/*Initially Disabled*/,196,18,]
+
+[IButton,  [StrMerge, CONTROLSHELPERS, "Get Tool Size"], "Get Tool Size",
+	//[RoutineCall, copySouceObjectAndDecimate]
+
+	[VarSet, maxSize, 0]
+
+	[RoutineCall, getBboxMaxSize,  maxSize]
+
+	/* GET TOOL SIZE IN MILIMETERS */
+	[VarSet, milimetersSize, [IGet, Tool:Export:scale] * maxSize  ]
+
+	[Note,
+		[StrMerge, "Total max size of all subtoools:\n\n", milimetersSize, "mm"]
+
+	 ,, 0]
+
+,/*Disabled*/, 190 ,/*Hotkey*/,/*Icon*/, 32]
+
+
+[IButton,  [StrMerge, CONTROLSHELPERS, "Mask By Cavity"], "Append Box scaled by tool in substraction mode",
+	[RoutineCall, maskByCavity]
+,/*Disabled*/, 190/2 ,/*Hotkey*/,/*Icon*/, 32]
+
+
+
+
+
+[IButton,  [StrMerge, CONTROLSHELPERS, "CREATE TEST SCENE"], "",
+
+
+	[IKeyPress, 78,[IPress, Document:New Document]]
+
+	[IPress,Tool:Sphere3D]
+
+
+	[CanvasStroke,(ZObjStrokeV02n78=H4BCV428YH4BCV428K1Xh4BC80v42880H4BCV429H4BCV436H4BCV440H4BCV44BH4BCV457H4BCV46EH4BCV485H4BCV498H4BCV4A9H4BCV4B7H4BCV4C7H4BCV4D6H4BCV4E4H4BCV4F0H4BCV4FFH4BCV50EH4BCV517H4BCV526H4BCV532H4BCV540H4BCV54BH4BCV54EH4BCV557H4BCV55CH4BCV565H4BCV570H4BCV57CH4BCV584H4BCV592H4BCV59EH4BCV5AAH4BCV5B0H4BCV5BAH4BCV5C1H4BCV5CEH4BCV5D5H4BCV5E3H4BCV5E8H4BCV5ECH4BCV5F2H4BCV5FBH4BCV5FEH4BCV601H4BCV604H4BCV607H4BCV60AH4BCV60CH4BCV613H4BCV615H4BCV617H4BCV61CH4BCV61EH4BCV621H4BCV623H4BCV626H4BCV628H4BCV62EH4BCV630H4BCV631H4BCV633H4BCV635H4BCV636H4BCV638H4BCV63AH4BCV63CH4BCV63DH4BCV63EH4BCV640H4BCV641H4BCV642H4BCV643H4BCV644H4BCV645H4BCV646H4BCV646)]
+
+	[IPress,Transform: Edit]
+
+	[IPress,Tool:Make PolyMesh3D]
+
+
+	[ISet,Tool:Export:Scale, 10]
+
+
+	[IPress,Transform:Fit]
+
+	[IPress,Transform: Pf]
+
+	[ISet, [StrMerge, CONTROLSHELPERS,"Thickness"], 3 ]
+
+
+	//[IPress,Tool:Make PolyMesh3D]
+	[IShow,Tool][IClick, Tool:SubTool,  1 ] // open menu
+
+,/*Disabled*/, 190 ,/*Hotkey*/,/*Icon*/,48]
+
+
+//[ISwitch,[StrMerge, CONTROLSHELPERS,"--- HELP ---"],1,"",,,/*Initially Disabled*/,196,18,]
+
+[IButton, [StrMerge, CONTROLSHELPERS,"[ MeshToShell ]"] , "Open:~MeshToShell ",	[IShow,"~MeshToShell"],, 96	,,,]
+
+
+[IButton,  [StrMerge, CONTROLSHELPERS, "RemeshProjected"], "Create remeshed object with projected details of source",
+
+	[VarSet, subtoolNameCurrent, [FileNameExtract, [GetActiveToolPath], 2]]
+	[VarSet, sourceIndex, [SubToolGetActiveIndex]]
+
+	[IPress,Tool:SubTool:Duplicate]
+	[VarSet, remeshIndex, [SubToolGetActiveIndex]]
+
+	[IPress,Tool:Geometry:ZRemesher]
+
+	//[IPress,Tool:SubTool:V8]
+
+	/* HIDE ALL SUBTOOLS */
+	[Loop, [SubToolGetCount],
+		[VarSet,isVis,0]
+		[RoutineCall,SubToolIsVisible,isVis, i ]
+
+		[If, (isVis), //code for visible subtool
+			[RoutineCall, subtoolVisibility, i , 0 ]]
+
+	, i]
+
+	/* SHOW SOURCE  */
+	[RoutineCall, subtoolVisibility, sourceIndex, 1 ]
+
+	/* SHOW REMESHED  */
+	[RoutineCall, subtoolVisibility, remeshIndex, 1 ]
+
+	[IPress,Tool:Geometry:Close Holes]
+
+	/* PROJECT DETAILS */
+	[IPress,Tool:SubTool:ProjectAll]
+
+
+	[SubToolSelect, sourceIndex ]
+	[IKeyPress,'2',[IPress, Tool:SubTool:Delete]] // 2: Ok 3: always ok
+
+	[RoutineCall, renameSubtool, subtoolNameCurrent]
+
+	//[IPress,Tool:SubTool:V1]
+
+,/*Disabled*/, 190 ,/*Hotkey*/,/*Icon*/, 32]

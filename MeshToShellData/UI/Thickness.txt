@@ -1,4 +1,50 @@
 
+
+
+[ISlider, [StrMerge, CONTROLSPATH,"Thickness"],/*CurValue*/ 1.5 ,/*Resolution*/ 0.1,/*MinValue*/ 0.1,/*MaxValue*/ 10, "Set Extraction thickness in milimeters"
+, //Commands
+	[RoutineCall, setSubtoolThicknessValue]
+//
+,	/*Disabled*/,	190/*Width*/,	48]
+
+
+/** SET 1 mm tickness
+  */
+[IButton,  [StrMerge, CONTROLSPATH, "1 mm"], "",
+
+	[ISet, [StrMerge, CONTROLSPATH,"Thickness"], 1]
+
+,/*Disabled*/, 38 ,/*Hotkey*/,/*Icon*/, 24]
+
+
+/** ADD 1 mm tickness
+  */
+[IButton,  [StrMerge, CONTROLSPATH, "+ 1"], "",
+	[RoutineCall, modifyTickness, 1 ]
+,/*Disabled*/, 38 ,/*Hotkey*/,/*Icon*/, 24]
+
+
+/** Remove 1 mm tickness
+  */
+[IButton,  [StrMerge, CONTROLSPATH, "- 1"], "",
+	[RoutineCall, modifyTickness, -1 ]
+,/*Disabled*/, 38 ,/*Hotkey*/,/*Icon*/, 24]
+
+
+/** ADD 0.1 mm tickness
+  */
+[IButton,  [StrMerge, CONTROLSPATH, "+ 0.1"], "",
+	[RoutineCall, modifyTickness, 0.1 ]
+,/*Disabled*/, 38 ,/*Hotkey*/,/*Icon*/, 24]
+
+/** Remove 0.1 mm tickness
+  */
+[IButton,  [StrMerge, CONTROLSPATH, "- 0.1"], "",
+	[RoutineCall, modifyTickness, -0.1 ]
+,/*Disabled*/, 38 ,/*Hotkey*/,/*Icon*/, 24]
+
+
+
 /*
 */
 [RoutineDef, modifyTickness,
@@ -11,53 +57,3 @@
 	increment
 ]
 
-/** SET 1 mm tickness
-  */
-[IButton,  [StrMerge, CONTROLSPATH, "1 mm"], "",
-
-	[ISet, [StrMerge, CONTROLSPATH,"Thickness"], 1]
-
-,/*Disabled*/, 38 ,/*Hotkey*/,/*Icon*/,36]
-
-
-/** ADD 1 mm tickness
-  */
-[IButton,  [StrMerge, CONTROLSPATH, "+ 1"], "",
-	[RoutineCall, modifyTickness, 1 ]
-,/*Disabled*/, 38 ,/*Hotkey*/,/*Icon*/,36]
-
-
-/** Remove 1 mm tickness
-  */
-[IButton,  [StrMerge, CONTROLSPATH, "- 1"], "",
-	[RoutineCall, modifyTickness, -1 ]
-,/*Disabled*/, 38 ,/*Hotkey*/,/*Icon*/,36]
-
-
-/** ADD 0.1 mm tickness
-  */
-[IButton,  [StrMerge, CONTROLSPATH, "+ 0.1"], "",
-	[RoutineCall, modifyTickness, 0.1 ]
-,/*Disabled*/, 38 ,/*Hotkey*/,/*Icon*/,36]
-
-/** Remove 0.1 mm tickness
-  */
-[IButton,  [StrMerge, CONTROLSPATH, "- 0.1"], "",
-	[RoutineCall, modifyTickness, -0.1 ]
-,/*Disabled*/, 38 ,/*Hotkey*/,/*Icon*/,36]
-
-
-
-[ISlider, [StrMerge, CONTROLSPATH,"Thickness"],/*CurValue*/ 1.5 ,/*Resolution*/ 0.1,/*MinValue*/ 0.1,/*MaxValue*/ 10, "Set Extraction thickness in milimeters"
-, //Commands
-	[VarSet, thicknessInMilimeters, 0]
-
-	[RoutineCall, getThicknessInMilimeters, thicknessInMilimeters ]
-
-	[VarSet, thisSliderValue, [IGet, [StrMerge, CONTROLSPATH,"Thickness"]]]
-
-	[VarSet, thickness, thicknessInMilimeters * thisSliderValue ]
-	//[Note, [StrMerge, "thickness: ", thickness ] ]
-	[ISet,Tool:SubTool:Thick, thickness ]
-//
-,	/*Disabled*/,	190/*Width*/,	32]

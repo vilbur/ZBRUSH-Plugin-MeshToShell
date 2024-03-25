@@ -12,7 +12,7 @@
 /*------------------------------------------------------------------------------
 	DEFINE SUBMENUS
 --------------------------------------------------------------------------------*/
-[VarSet, PLUGINSUBMENU, 	"Extract Shell"]
+[VarSet, HELPERSSUBMENU, 	"HELPERS"]
 [VarSet, TESTINGSUBMENU,	"TEST" ]
 
 /*------------------------------------------------------------------------------
@@ -26,8 +26,8 @@
 	PRODUCTION: CONTROLS IN MENU, use this path to place controls in bmenu: PluginMenu > Control
 
 	[VarSet, CONTROLSPATH,	[StrMerge, PLUGINNENU, ":"]]
-
 --------------------------------------------------------------------------------*/
+	[VarSet, CONTROLSPATH,	[StrMerge, PLUGINNENU, ":"]]
 
 
 /*------------------------------------------------------------------------------
@@ -38,8 +38,8 @@
 	[VarSet, CONTROLSPATH,	[StrMerge, PLUGINNENU, ":", PLUGINSUBMENU, ":"]]
 	[VarSet, CONTROLSTEST,	[StrMerge, PLUGINNENU, ":", TESTINGSUBMENU, ":"]]
 --------------------------------------------------------------------------------*/
-	[VarSet, CONTROLSPATH,	[StrMerge, PLUGINNENU, ":", PLUGINSUBMENU, ":"]]
-	[VarSet, CONTROLSTEST,	[StrMerge, PLUGINNENU, ":", TESTINGSUBMENU, ":"]]
+	[VarSet, CONTROLSHELPERS,	[StrMerge, PLUGINNENU, ":", HELPERSSUBMENU, ":"]]
+	//[VarSet, CONTROLSTEST,	[StrMerge, PLUGINNENU, ":", TESTINGSUBMENU, ":"]]
 
 
 
@@ -68,11 +68,8 @@
 <zscriptinsert, "MeshToShellData/routines-help.txt">	// "./MeshToShellData/routines-help.txt"
 
 
-[If, [StrLength, CONTROLSPATH ] > 0, // THEN
-	[ISubPalette, [StrMerge, PLUGINNENU, ":", PLUGINSUBMENU ]]]
-
 <zscriptinsert, "MeshToShellData/UI/Decimation.txt">	// "./MeshToShellData/UI/Decimation.txt"
 <zscriptinsert, "MeshToShellData/UI/Thickness.txt">	// "./MeshToShellData/UI/Thickness.txt"
 <zscriptinsert, "MeshToShellData/UI/UI-extractShell.txt">	// "./MeshToShellData/UI/UI-extractShell.txt"
 
-<zscriptinsert, "MeshToShellData/UI/Testing.txt">	// "./MeshToShellData/UI/Testing.txt"
+<zscriptinsert, "MeshToShellData/UI/UI-Helpers.txt">	// "./MeshToShellData/UI/UI-Helpers.txt"

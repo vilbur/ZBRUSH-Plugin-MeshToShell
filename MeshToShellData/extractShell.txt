@@ -6,22 +6,37 @@
 
 	[IPress,Tool:SubTool:Duplicate]
 
+	[RoutineCall, renameSubtool, "Shell-Decimated"]
 
-	[RoutineCall, renameSubtool, "Shell-Source"]
-
-	[VarSet, deciamtePercent, 20]
-
-	[ISet, "Zplugin:Decimation Master:% of decimation", [Var, deciamtePercent] ]
+	[RoutineCall, setDecimationValue]
 
 	/* AHK LAUNCHED BELLOW WORKS ONLY IF SCRIPT IS CRUNNING FROM PLUGIN PALLETE, DOESN'T WORK IF LAUNCHED FROM SCRIPT PANE */
-	//[VarSet, waitFoPreprocessAndExecuteDecimation, "C:\\GoogleDrive\\ProgramsData\\CG\\ZBrush\\Plugins\\INSTALLED\\ToolLoader\\ToolLoaderData\\Ahk\\waitFoPreprocessAndExecuteDecimation.ahk"]
-	[VarSet, waitFoPreprocessAndExecuteDecimation,  [StrMerge, PLUGINDATAPATH, "\\Ahk\\waitFoPreprocessAndExecuteDecimation.ahk"]]
+	[If, continue,
+		[VarSet, ahkPath,  [StrMerge, PLUGINDATAPATH, "\\Ahk\\copyDecimateAndContinue.ahk"]],
+		[VarSet, ahkPath,  [StrMerge, PLUGINDATAPATH, "\\Ahk\\copyAndDecimate.ahk"]]
+	]
 
 	//[FileExecute, ZFILEUTILSDLL, "LaunchAppWithFile",  #preprocessCurrent]
-	[FileExecute, ZFILEUTILSDLL, "LaunchAppWithFile",  #waitFoPreprocessAndExecuteDecimation]
+	[FileExecute, ZFILEUTILSDLL, "LaunchAppWithFile",  #ahkPath]
 
-//, // PARAMS
+, // PARAMS
+	continue
+]
 
+/** continue After Decimation
+  *
+  * Fired by autohotkey vi keyboard shortcut
+*/
+[RoutineDef, continueAfterDecimation
+,
+	[RoutineCall, zRemeshSubtool]
+	[RoutineCall, extractShell]
+	[RoutineCall, explodeShell]
+	[RoutineCall, liveBooleanOn]
+
+	[IPress,Tool:SubTool:V1]
+
+	[Note, "SHELL DONE",, 0]
 ]
 
 /** zRemeshSubtool
@@ -29,19 +44,18 @@
 [RoutineDef, zRemeshSubtool
 ,
 	//[Note, "zRemeshSubtool"]
-	[IPress,Transform:Solo]
+	[IUnPress,Tool:Geometry:Same]
+	[IUnPress,Tool:Geometry:Half]
+	[IUnPress,Tool:Geometry:FreezeBorder]
+	[IUnPress,Tool:Geometry:KeepGroups]
 
-	[IPress,Tool:Geometry:Double]
+	[IPress,Transform:Solo]
 
 	[IPress,Tool:Geometry:Adapt]
 
-	[IUnPress,Tool:Geometry:Same]
+	[IPress,Tool:Geometry:Double]
 
-	[IUnPress,Tool:Geometry:Half]
 
-	[IUnPress,Tool:Geometry:FreezeBorder]
-
-	[IUnPress,Tool:Geometry:KeepGroups]
 
 	//[FileNameSetNext,"C:\Users\Public\Documents/ZBrushData2022/Temp/objIn.goz"]
 	[IPress,Tool:Geometry:ZRemesher]
@@ -58,12 +72,16 @@
 
 	/* SHOW SOURCE  */
 	[RoutineCall, subtoolVisibility, [SubToolGetActiveIndex], 1 ]
+
 	/* SHOW REMESHED  */
 	[RoutineCall, subtoolVisibility, [SubToolGetActiveIndex] -1 , 1 ]
+
 	[IPress,Tool:Geometry:Close Holes]
 
+	[RoutineCall, renameSubtool, "Shell-Remeshed"]
+
 	/* PROJECT DETAILS */
-	[IKeyPress,'2',[IPress,Tool:SubTool:ProjectAll]]
+	[IPress,Tool:SubTool:ProjectAll]
 
 
 ////, // PARAMS
@@ -91,48 +109,125 @@
 	[SubToolSelect, subtoolDecimated ]
 
 
+	/* SET SINGLE POLYGROUP TO SHELL */
 	[IPress,Tool:Polygroups:GroupVisible]
 
 
-	[Note,
+	/* SET VALUE OF EXTRACITON  */
+	[RoutineCall, setSubtoolThicknessValue]
 
-		[IGet,Tool:SubTool:Thick]
-	 ,, 0]
-
-
+	/* EXTRACT */
+	[ISet,Tool:SubTool:S Smt, 1 ]
 	[IPress,Tool:SubTool:Extract]
 	[IPress,Tool:SubTool:Accept]
 
-	[RoutineCall, renameSubtool, [StrMerge, sourceToolName, "-INNER"] ]
 
-	//[IPress,Tool:Polygroups:Auto Groups]
+	[RoutineCall, renameSubtool, [StrMerge, sourceToolName, "-EXTRACTED"] ] // rename with thickness in mm subtool-EX-1.5
+
+]
+
+/** explodeShell
+  */
+[RoutineDef, explodeShell
+,
+
+	/* SELECT SOURCE OF EXTRACTION */
+	[SubToolSelect, [SubToolGetActiveIndex] - 1 ]
+	/* GET VOLUME OF SOURCE OBJECT */
+	[VarSet, volumeSource, [GetPolyMesh3DVolume]]
+
+	/* DELETE SOURCE OF EXTRACTION */
+	[IKeyPress,'3',[IPress, Tool:SubTool:Delete]] // 2: Ok 3: always ok
 
 
+	[VarSet, firstGroup, [SubToolGetActiveIndex]] // decimated copy of source objject
+	[VarSet, countBeforeExplode, [SubToolGetCount]]
+
+	/* SPLIT BY POLYGROUPS */
 	[IKeyPress, '2', [IPress, Tool:Subtool:Groups Split]]
 
-
-	[VarSet, explodedSubtoolsCount, [SubToolGetCount] - countBeforeExplode ]
-
-	[SubToolSelect, subtoolDecimated ]
+	/* GET SUBTOOLS COUNT BEFORE EXPLODE */
+	[VarSet, explodedPolygroupsCount, [SubToolGetCount] - countBeforeExplode ]
 
 
+	/* SELECT FIRST EXPLODED SUBTOOL */
 
 	/* DELETE OTHER MESHOSES AFTER EXPLODE, ONLY LAST IS LEFT */
-	[Loop, explodedSubtoolsCount,
-		[IKeyPress,'2',[IPress, Tool:SubTool:Delete]] // 2: Ok 3: always ok
+	/* DELETE OUTTER MESH - its volume is bigger then source */
+	[Loop, explodedPolygroupsCount,
+
+		[SubToolSelect, firstGroup + i ]
+
+		//[IKeyPress,'2',[IPress, Tool:SubTool:Delete]] // 2: Ok 3: always ok
+		[VarSet, volumeOfPolygroup, [GetPolyMesh3DVolume]]
+
+		[If, volumeOfPolygroup > volumeSource,
+			[IPress, Tool:SubTool:Delete]
+			/* UPDATE COUNT OF PARTS */
+
+			[VarSet, explodedPolygroupsCount, explodedPolygroupsCount -1 ]
+
+		]
 	,i]
 
 
-	[SubToolSelect, subtoolDecimated ]
-	[RoutineCall, setBooleanSubstract ]
+	[If, explodedPolygroupsCount > 1, // THEN
+		[VarSet, maxVolume, 0]
+		[VarSet, maxVolumeIndex, 0]
+
+		/* FIND LARGEST FROM OTHER EXPLODED POOLYGROUPS */
+		[Loop, explodedPolygroupsCount -1,
+			//[IKeyPress,'2',[IPress, Tool:SubTool:Delete]] // 2: Ok 3: always ok
+			[SubToolSelect, firstGroup + i ]
+
+			[VarSet, volumeOfPolygroup, [GetPolyMesh3DVolume]]
+
+			[If, volumeOfPolygroup > maxVolume,
+
+				[VarSet, maxVolumeIndex, [SubToolGetActiveIndex]]
+				[VarSet, maxVolume, volumeOfPolygroup]
+			]
+		,i]
+
+		[Note, [StrMerge, "maxVolumeIndex: ", maxVolumeIndex ] ]
+		/* SELECT LAST PART */
+		[SubToolSelect, firstGroup + explodedPolygroupsCount ]
+		[Note, [StrMerge, "name: ", [FileNameExtract, [GetActiveToolPath], 2] ] ]
+		/* LOOP PARTS FROM END END DELETE OTHERS THEN BIGGEST */
+		[Loop, explodedPolygroupsCount,
+
+			[If, maxVolumeIndex != [SubToolGetActiveIndex],
+				[IPress, Tool:SubTool:Delete]
+			,
+				[SubToolSelect, [SubToolGetActiveIndex] -1 ]
+			]
+
+		,i]
+
+	]
 
 
-	[SubToolSelect, sourceTool ]
-	[RoutineCall, setBooleanAdd ]
-
-////, // PARAMS
+	//[Loop, explodedPolygroupsCount,
+	//	//[IKeyPress,'2',[IPress, Tool:SubTool:Delete]] // 2: Ok 3: always ok
+	//	[IPress, Tool:SubTool:Delete]
+	//,i]
+	//
+	//
+	///* SET SHELL OBJECT BOOLEAN 'SUBSTRACT' MODE  */
+	//[SubToolSelect, firstGroup -1 ]
+	//[RoutineCall, setBooleanAdd ]
+	//
+	///* SET SOURCE OBJECT BOOLEAN 'ADD' MODE  */
+	//[SubToolSelect, firstGroup ]
+	//[RoutineCall, setBooleanSubstract ]
+	//
+	//
+	//[RoutineCall, maskByCavity]
+	//[IPress,Tool:Masking:ShrinkMask]
 
 ]
+
+
 
 /* liveBooleanOn
 */
@@ -151,6 +246,7 @@
 [RoutineDef, appendSlicerBox
 , /* function */
 
+	[VarSet, SubtoolActiveInex, [SubToolGetActiveIndex]]
 	[VarSet, maxSize, 2]
 
 	[VarSet, xmin, 0]
@@ -180,13 +276,16 @@
 		[IPress,[StrMerge,"PopUp:",[Var,toolName]]]
 	]
 
+	/* SELECT LAST (appended) TOOL */
 	[SubToolSelect, [SubToolGetCount] - 1 ]
+	[RoutineCall, renameSubtool, "SLICER"]
 
 
-	[ISet,Tool:Geometry:XYZ Size, maxSize ]
+	[ISet,Tool:Geometry:XYZ Size, maxSize *1.1 ]
 	[ISet,Tool:Geometry:Y Size, maxSize / 4 ]
 
 
+	//[ISet,Tool:Geometry:Y Position,  ymax + [IGet,Tool:Geometry:Y Size] ]
 	[ISet,Tool:Geometry:Y Position,  ymax ]
 
 	[VarSet,subtoolPath,[StrMerge,"Tool:Subtool:", [IGetTitle,"Tool:Current Tool"]]]
@@ -197,6 +296,13 @@
 	[IClick,subtoolPath,wid-75,5]
 
 
+	[VarSet, moveUpCount, [SubToolGetCount] - SubtoolActiveInex - 2 ]
+
+	[Loop, moveUpCount,
+		[IPress,Tool:SubTool:MoveUp]]
+
+
+
 	/* TURN POLYFRAME ON IF LIVE BOLLEAN IS ACTIVE */
 	[If, [IGet,Render:Render Booleans:Live Boolean], // THEN
 		[IPress,Transform: Pf]]
@@ -205,6 +311,7 @@
 	[IPress,Transform:Fit]
 
 	[IPress,Transform:Move]
+	[ISet,Draw:Focal Shift,-100]
 
 ]
 
@@ -214,10 +321,15 @@
 [RoutineDef, maskByCavity
 , /* function */
 
+
+
 	[ISet,Tool:Masking:Blur,100]
+
 	[ISet,Tool:Masking:Intensity,5]
 
-	[IPress,Tool:Masking:Mask By Cavity]
+	[IPress,Tool:Display Properties:Flip]
+		[IPress,Tool:Masking:Mask By Cavity]
+	[IPress,Tool:Display Properties:Flip]
 
 	[IPress,Tool:Masking:Inverse]
 

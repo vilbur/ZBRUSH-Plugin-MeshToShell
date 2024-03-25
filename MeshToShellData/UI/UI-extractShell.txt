@@ -7,38 +7,124 @@
 	[IPress,Transform: Pf]
 	[IPress,Tool:SubTool:V8]
 
-	[RoutineCall, copySouceObjectAndDecimate]
+	[RoutineCall, copySouceObjectAndDecimate, 1]
 
 ,/*Disabled*/, 190 ,/*Hotkey*/,/*Icon*/,48]
 
+[IButton,  [StrMerge, CONTROLSPATH, "Continue after decimation"], "Continue after decimation\n\nTHIS BUTTON MUST HOKEY ASSIGNED\n\nCTRL+SHift+F7",
+
+	[RoutineCall, continueAfterDecimation]
+
+	[Note, "DECIMATION IS DONE",, 0]
+
+,/*Disabled*/, 190 ,  /*Hotkey*/,/*Icon*/,32]
 
 
-[ISwitch,[StrMerge, CONTROLSPATH,"——— MANUAL EXECUTION ———"],1,"DO NOTHING,JUST LABEL",,,/*Initially Disabled*/,196,18,]
 
 
-[IButton,  [StrMerge, CONTROLSPATH, "Step 1 Copy And Decimate"], "REST OF METHOSDS IS FIRED AFTER DECIMATION in waitFoPreprocessAndExecuteDecimation.ahk\n\nDISABLE LINE 'CONTINUE AFTER DECIMATION' FOR METHODS TEST STEP BY STEP",
+/* LABEL */
+[ISwitch,[StrMerge, CONTROLSPATH,"--- MANUAL EXECUTION ---"],1,"Execute shell creation in steps bellow",,,/*Initially Disabled*/,196,18,]
+
+
+[IButton,  [StrMerge, CONTROLSPATH, "Step 1 - Copy And Decimate"], "REST OF METHOSDS IS FIRED AFTER DECIMATION in waitFoPreprocessAndExecuteDecimation.ahk\n\nDISABLE LINE 'CONTINUE AFTER DECIMATION' FOR METHODS TEST STEP BY STEP",
 
 	[IPress,Transform: Pf]
 	[IPress,Transform:Solo]
-	[RoutineCall, copySouceObjectAndDecimate]
+	[RoutineCall, copySouceObjectAndDecimate, 0]
 
 ,/*Disabled*/, 196 ,/*Hotkey*/,/*Icon*/,48]
 
 /*
 */
-[IButton,  [StrMerge, CONTROLSPATH, "Step 2 RemeshSubtool"], "",
+[IButton,  [StrMerge, CONTROLSPATH, "Step 2 - Remesh"], "",
 	[RoutineCall, zRemeshSubtool]
-	[IPress,Tool:SubTool:ProjectAll]
+
+	[Note, "REMESHING IS DONE",, 0.5 ]
 ,/*Disabled*/, 196 ,/*Hotkey*/,/*Icon*/,48]
 
 
-[IButton,  [StrMerge, CONTROLSPATH, "Step 3 Extract Shell"], "",
+[IButton,  [StrMerge, CONTROLSPATH, "Step 3 - Extract Shell"], "",
 	[RoutineCall, extractShell]
+
+	[Note, "SHELL IS EXTRACTED",, 0.5 ]
 ,/*Disabled*/, 196 ,/*Hotkey*/,/*Icon*/,48]
 
 
-[IButton,  [StrMerge, CONTROLSPATH, "Step 5 Live Boolean On"], "",
+[IButton,  [StrMerge, CONTROLSPATH, "Step 4 - Explode Shell"], "",
+	[RoutineCall, explodeShell]
 
+	[Note, "SHELL IS EXPLODE",, 0.5 ]
+,/*Disabled*/, 196 ,/*Hotkey*/,/*Icon*/,48]
+
+
+[IButton,  [StrMerge, CONTROLSPATH, "Step 5 - Live Boolean On"], "",
 	[RoutineCall, liveBooleanOn ]
 
+	[Note, "LIVE BOOLEAN ON",, 0.5 ]
 ,/*Disabled*/, 196 ,/*Hotkey*/,/*Icon*/,48]
+
+
+[ISwitch,[StrMerge, CONTROLSPATH,"--- POSTPROCESS ---"],1,"DO NOTHING,JUST LABEL",,,/*Initially Disabled*/,196,18,]
+
+
+[IButton,  [StrMerge, CONTROLSPATH, "Add Slicer"], "Append Box scaled by tool in substraction mode",
+	[RoutineCall, appendSlicerBox]
+,/*Disabled*/, 196 ,/*Hotkey*/,/*Icon*/, 32]
+
+
+
+[ISlider, [StrMerge, CONTROLSPATH, "CAVITY INTENSITY"], /*CurValue*/50, /*Resolution*/1, /*MinValue*/-100, /*MaxValue*/100, "Generate Cavity Map real time"
+, //Commands
+
+	[ISet,Tool:Masking:Blur, [IGet, [StrMerge, CONTROLSPATH, "CAVITY BLUR"] ]]
+	[ISet,Tool:Masking:Intensity, [IGet, [StrMerge, CONTROLSPATH, "CAVITY INTENSITY"] ]]
+
+	[IPress,Tool:Masking:Mask By Cavity]
+	[IPress,Tool:Masking:Inverse]
+
+
+,	/*Disabled*/,	192 /*Width*/,	32 /*Height*/]
+
+[VarDef, BLURLASTVALUE, 0]
+
+[ISlider, [StrMerge, CONTROLSPATH, "CAVITY BLUR"], /*CurValue*/0, /*Resolution*/1, /*MinValue*/-10, /*MaxValue*/10, "Generate Cavity Map real time"
+, //Commands
+
+	[VarSet, valueCurrent, [IGet, [StrMerge, CONTROLSPATH, "CAVITY BLUR"]]]
+
+	[If, valueCurrent > BLURLASTVALUE
+	, // THEN
+		[IPress,Tool:Masking:BlurMask]
+	, // ELSE
+		[IPress,Tool:Masking:SharpenMask]
+	]
+
+	[VarSet, BLURLASTVALUE, valueCurrent]
+			//[IPress,Tool:Masking:GrowkMask]
+			////[IPress,Tool:Masking:ShrinkMask]
+
+	//[ISet,Tool:Masking:Blur, [IGet, [StrMerge, CONTROLSPATH, "CAVITY BLUR"] ]]
+	//[ISet,Tool:Masking:Intensity, [IGet, [StrMerge, CONTROLSPATH, "CAVITY INTENSITY"] ]]
+	//
+	//[IPress,Tool:Masking:Mask By Cavity]
+
+
+,	/*Disabled*/,	192 /*Width*/,	32 /*Height*/]
+
+
+[IButton,  [StrMerge, CONTROLSPATH, "Relax"], "",
+
+,/*Disabled*/, 196/4,/*Hotkey*/,/*Icon*/, 32]
+
+
+
+
+
+
+
+
+
+
+
+
+

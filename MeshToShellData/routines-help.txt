@@ -24,7 +24,10 @@
 	maxSize
 ]
 
-/* getThicknessInMilimeters
+/* Get size of subtool in mm
+   * Size of Tool muliplied with export scale is size in milimeters
+   *
+   * @return value of ticknes to get shell of thickness 1 milimeter
 */
 [RoutineDef, getThicknessInMilimeters
 , /* function */
@@ -43,6 +46,30 @@
 
 	thickness
 ]
+
+/* Set value of native controls precomputed from milimeters to 0-1 scale
+*/
+[RoutineDef, setSubtoolThicknessValue
+, /* function */
+
+	[VarSet, thicknessInMilimeters, 0]
+
+	[RoutineCall, getThicknessInMilimeters, thicknessInMilimeters ]
+
+	[VarSet, thisSliderValue, [IGet, [StrMerge, CONTROLSPATH,"Thickness"]]]
+
+	[VarSet, thickness, thicknessInMilimeters * thisSliderValue * -1 ]
+	//[Note, [StrMerge, "thickness: ", thickness ] ]
+	[ISet,Tool:SubTool:Thick, thickness ]
+]
+
+/* Set value of % decimation
+*/
+[RoutineDef, setDecimationValue
+, /* function */
+	[ISet, "Zplugin:Decimation Master:% of decimation", [IGet, [StrMerge, CONTROLSPATH,"Decimation"]] ]
+]
+
 
 /**
   *

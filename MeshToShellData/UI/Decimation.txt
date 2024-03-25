@@ -1,59 +1,47 @@
 
 
+[ISlider, [StrMerge, CONTROLSPATH,"Decimation"],/*CurValue*/ 20 ,/*Resolution*/ 1,/*MinValue*/ 1,/*MaxValue*/ 100,"Set inner shell decimation value"
+, //Commands
+	[RoutineCall, setDecimationValue]
+,	/*Disabled*/,	190/*Width*/,	48]
+
+
+
 /** SET 1 % Decimation
   */
 [IButton,  [StrMerge, CONTROLSPATH,  "1"], "Set 1 % Decimation of inner shell",
 	[ISet, [StrMerge, CONTROLSPATH,"Decimation"], 1]
-,/*Disabled*/, 30 ,/*Hotkey*/,/*Icon*/,32]
+,/*Disabled*/, 30 ,/*Hotkey*/,/*Icon*/,24]
 
 
 /** SET 5 % Decimation
   */
 [IButton,  [StrMerge, CONTROLSPATH, "5"], "Set 5 % Decimation of inner shell",
 	[ISet, [StrMerge, CONTROLSPATH,"Decimation"], 5]
-,/*Disabled*/, 30 ,/*Hotkey*/,/*Icon*/,32]
+,/*Disabled*/, 30 ,/*Hotkey*/,/*Icon*/,24]
 
 /** SET 10 % Decimation
   */
 [IButton,  [StrMerge, CONTROLSPATH, "10"], "Set 10 % Decimation of inner shell",
 	[ISet, [StrMerge, CONTROLSPATH,"Decimation"], 10]
-,/*Disabled*/, 30 ,/*Hotkey*/,/*Icon*/,32]
+,/*Disabled*/, 30 ,/*Hotkey*/,/*Icon*/,24]
 
 /** SET 20 % Decimation
   */
 [IButton,  [StrMerge, CONTROLSPATH, "20"], "Set 20 % Decimation of inner shell",
 	[ISet, [StrMerge, CONTROLSPATH,"Decimation"], 20]
-,/*Disabled*/, 30 ,/*Hotkey*/,/*Icon*/,32]
+,/*Disabled*/, 30 ,/*Hotkey*/,/*Icon*/,24]
 
 
 /** SET 50 % Decimation
   */
 [IButton,  [StrMerge, CONTROLSPATH, "50"], "Set 50 % Decimation of inner shell",
 	[ISet, [StrMerge, CONTROLSPATH,"Decimation"], 50]
-,/*Disabled*/, 30 ,/*Hotkey*/,/*Icon*/,32]
+,/*Disabled*/, 30 ,/*Hotkey*/,/*Icon*/,24]
 
 
 /** SET 100 % Decimation
   */
 [IButton,  [StrMerge, CONTROLSPATH, "100"], "Set 100 % Decimation of inner shell",
 	[ISet, [StrMerge, CONTROLSPATH,"Decimation"], 100]
-,/*Disabled*/, 30 ,/*Hotkey*/,/*Icon*/,32]
-
-
-[ISlider, [StrMerge, CONTROLSPATH,"Decimation"],/*CurValue*/ 20 ,/*Resolution*/ 1,/*MinValue*/ 1,/*MaxValue*/ 100,"Set inner shell decimation value"
-, //Commands
-
-	[ISet, "Zplugin:Decimation Master:% of decimation", [IGet, [StrMerge, CONTROLSPATH,"Decimation"]] ]
-
-	//[VarSet, thicknessOfMilimeter, 0]
-//
-//	[RoutineCall, getThicknessInMilimeters, thicknessOfMilimeter ]
-//
-//	[VarSet, thisSliderValue, [IGet, [StrMerge, CONTROLSPATH,"Decimation"]]]
-//
-//	[VarSet, thickness, thicknessOfMilimeter * thisSliderValue ]
-//	//[Note, [StrMerge, "thickness: ", thickness ] ]
-//	[ISet,Tool:SubTool:Thick, thickness,  ]
-//
-,	/*Disabled*/,	190/*Width*/,	32]
-
+,/*Disabled*/, 30 ,/*Hotkey*/,/*Icon*/,24]
