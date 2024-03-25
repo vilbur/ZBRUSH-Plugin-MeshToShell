@@ -23,8 +23,8 @@
 
 
 /* LABEL */
-[ISwitch,[StrMerge, CONTROLSPATH,"--- MANUAL EXECUTION ---"],1,"Execute shell creation in steps bellow",,,/*Initially Disabled*/,196,18,]
-
+//[ISwitch,[StrMerge, CONTROLSPATH,"--- MANUAL EXECUTION ---"],1,"Execute shell creation in steps bellow",,,/*Initially Disabled*/,196,18,]
+//[ISubPalette, [StrMerge, CONTROLSPATH, "MANUAL EXECUTION" ]]
 
 [IButton,  [StrMerge, CONTROLSPATH, "Step 1 - Copy And Decimate"], "REST OF METHOSDS IS FIRED AFTER DECIMATION in waitFoPreprocessAndExecuteDecimation.ahk\n\nDISABLE LINE 'CONTINUE AFTER DECIMATION' FOR METHODS TEST STEP BY STEP",
 
@@ -37,7 +37,17 @@
 /*
 */
 [IButton,  [StrMerge, CONTROLSPATH, "Step 2 - Remesh"], "",
-	[RoutineCall, zRemeshSubtool]
+
+	[IUnPress,Tool:Geometry:Same]
+	[IUnPress,Tool:Geometry:Half]
+	[IUnPress,Tool:Geometry:FreezeBorder]
+	[IUnPress,Tool:Geometry:KeepGroups]
+
+	[IPress,Transform:Solo]
+	[IPress,Tool:Geometry:Adapt]
+	[IPress,Tool:Geometry:Double]
+
+	[RoutineCall, zRemeshSubtool, 0 /*copy*/, 1/* project*/]
 
 	[Note, "REMESHING IS DONE",, 0.5 ]
 ,/*Disabled*/, 196 ,/*Hotkey*/,/*Icon*/,48]
@@ -64,7 +74,7 @@
 ,/*Disabled*/, 196 ,/*Hotkey*/,/*Icon*/,48]
 
 
-[ISwitch,[StrMerge, CONTROLSPATH,"--- POSTPROCESS ---"],1,"DO NOTHING,JUST LABEL",,,/*Initially Disabled*/,196,18,]
+//[ISwitch,[StrMerge, CONTROLSPATH,"--- POSTPROCESS ---"],1,"DO NOTHING,JUST LABEL",,,/*Initially Disabled*/,196,18,]
 
 
 [IButton,  [StrMerge, CONTROLSPATH, "Add Slicer"], "Append Box scaled by tool in substraction mode",
@@ -112,9 +122,12 @@
 ,	/*Disabled*/,	192 /*Width*/,	32 /*Height*/]
 
 
+/** RELAX
+  *
+  */
 [IButton,  [StrMerge, CONTROLSPATH, "Relax"], "",
 
-,/*Disabled*/, 196/4,/*Hotkey*/,/*Icon*/, 32]
+,/*Disabled*/, 196/2,/*Hotkey*/,/*Icon*/, 32]
 
 
 

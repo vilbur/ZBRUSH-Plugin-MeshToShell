@@ -12,7 +12,7 @@
 /*------------------------------------------------------------------------------
 	DEFINE SUBMENUS
 --------------------------------------------------------------------------------*/
-[VarSet, HELPERSSUBMENU, 	"HELPERS"]
+[VarSet, HELPERSSUBMENU, 	"---- HELPERS ----"]
 [VarSet, TESTINGSUBMENU,	"TEST" ]
 
 /*------------------------------------------------------------------------------
@@ -51,11 +51,6 @@
 	[VarSet, CONTROLSTEST,	"" ]
 
 --------------------------------------------------------------------------------*/
-
-	//[VarSet, CONTROLSPATH,	"" ]
-	//[VarSet, CONTROLSTEST,	"" ]
-
-
 
 [VarSet, ZFILEUTILSDLL, [StrMerge, PLUGINDATAPATH, "\ZFileUtils64.dll"] ]
 

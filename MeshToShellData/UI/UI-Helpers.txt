@@ -67,45 +67,96 @@
 [IButton, [StrMerge, CONTROLSHELPERS,"[ MeshToShell ]"] , "Open:~MeshToShell ",	[IShow,"~MeshToShell"],, 96	,,,]
 
 
-[IButton,  [StrMerge, CONTROLSHELPERS, "RemeshProjected"], "Create remeshed object with projected details of source",
-
-	[VarSet, subtoolNameCurrent, [FileNameExtract, [GetActiveToolPath], 2]]
-	[VarSet, sourceIndex, [SubToolGetActiveIndex]]
-
-	[IPress,Tool:SubTool:Duplicate]
-	[VarSet, remeshIndex, [SubToolGetActiveIndex]]
-
-	[IPress,Tool:Geometry:ZRemesher]
-
-	//[IPress,Tool:SubTool:V8]
-
-	/* HIDE ALL SUBTOOLS */
-	[Loop, [SubToolGetCount],
-		[VarSet,isVis,0]
-		[RoutineCall,SubToolIsVisible,isVis, i ]
-
-		[If, (isVis), //code for visible subtool
-			[RoutineCall, subtoolVisibility, i , 0 ]]
-
-	, i]
-
-	/* SHOW SOURCE  */
-	[RoutineCall, subtoolVisibility, sourceIndex, 1 ]
-
-	/* SHOW REMESHED  */
-	[RoutineCall, subtoolVisibility, remeshIndex, 1 ]
-
-	[IPress,Tool:Geometry:Close Holes]
-
-	/* PROJECT DETAILS */
-	[IPress,Tool:SubTool:ProjectAll]
 
 
-	[SubToolSelect, sourceIndex ]
-	[IKeyPress,'2',[IPress, Tool:SubTool:Delete]] // 2: Ok 3: always ok
+/* REMESH
 
-	[RoutineCall, renameSubtool, subtoolNameCurrent]
+*/
+[IButton,  [StrMerge, CONTROLSHELPERS, "Remesh"], "Create remeshed object with projected details of source",
 
-	//[IPress,Tool:SubTool:V1]
 
-,/*Disabled*/, 190 ,/*Hotkey*/,/*Icon*/, 32]
+	[VarSet, copySource, [IGet,[StrMerge, CONTROLSHELPERS,"Copy"]]]
+	[VarSet, projectAll, [IGet,[StrMerge, CONTROLSHELPERS,"Project"]]]
+
+	//[Note, [StrMerge,
+	//	"copySource: ", copySource, "\n\n",
+	//	"projectAll: ", projectAll, "\n\n",
+	//	"keepCopy: ", keepCopy
+	//]]
+	[RoutineCall, zRemeshSubtool, copySource, projectAll ]
+
+	[IPress,Transform:Solo]
+	[IPress,Transform: Pf]
+
+	[VarSet, copySource, [IGet,[StrMerge, CONTROLSHELPERS,"Copy"]]]
+	[VarSet, projectAll, [IGet,[StrMerge, CONTROLSHELPERS,"Project"]]]
+
+	[VarSet, message, "REMESH FINISHED"]
+
+	[If, copySource, // THEN
+		[StrMerge, message, "\n\nSource COPY"]]
+
+	[If, projectAll, // THEN
+		[StrMerge, message, " and PROJECTED"]]
+
+	[Note, message,, 1.5 ]
+
+
+
+,/*Disabled*/, 96 ,/*Hotkey*/,/*Icon*/, 64 ]
+
+
+
+
+/* REMESH SETUP
+
+	1) zREMESH Selected Object
+	2) COPY Selected Object and zREMESH
+	3) COPY Selected Object, zREMESH and PROJECT source to remesh
+	3) COPY Selected Object, zREMESH, PROJECT and DELETE SOURCE
+
+*/
+
+[ISwitch, [StrMerge, CONTROLSHELPERS,"Copy"],0  /* state */, ""
+, // PRESS
+
+, // UNPRESS
+
+,,,	24]
+
+
+[ISwitch, [StrMerge, CONTROLSHELPERS,"Project"],0  /* state */, ""
+, // PRESS
+
+, // UNPRESS
+
+,,,	24]
+
+[IModify, [StrMerge, CONTROLSHELPERS,"Copy"],	96, 32 ]
+[IModify, [StrMerge, CONTROLSHELPERS,"Project"],	96, 32 ]
+
+/** PROJECT ALL
+  */
+
+//[ISwitch, [StrMerge, CONTROLSHELPERS,"Project"], 1 /* state */, "Tooltip"
+//, /* Pressed */
+//	//[IUnPress,[StrMerge, CONTROLSHELPERS,"Copy"]]
+//
+//, /* Unpressed */
+//
+//,	/*Disabled*/,	64 /*Width*/,	24 /*Height*/,	/*Icon*/]
+
+
+
+
+
+//,
+// 	//[IEnable,[StrMerge, CONTROLSHELPERS,"KEEP"]]
+//	//[IUnPress,[StrMerge, CONTROLSHELPERS,"COPY"]]
+//
+//,
+//	//[IDisable,[StrMerge, CONTROLSHELPERS,"KEEP"]]
+// 	//[IEnable,[StrMerge, CONTROLSHELPERS,"COPY"]]
+//
+//,/*Initially Disabled*/,192/3,24]
+

@@ -44,48 +44,71 @@
 [RoutineDef, zRemeshSubtool
 ,
 	//[Note, "zRemeshSubtool"]
-	[IUnPress,Tool:Geometry:Same]
-	[IUnPress,Tool:Geometry:Half]
-	[IUnPress,Tool:Geometry:FreezeBorder]
-	[IUnPress,Tool:Geometry:KeepGroups]
+	//[Note, [StrMerge,
+	//	"copySource: ", copySource, "\n\n",
+	//	"projectAll: ", projectAll
+	//]]
 
-	[IPress,Transform:Solo]
-
-	[IPress,Tool:Geometry:Adapt]
-
-	[IPress,Tool:Geometry:Double]
+	[VarSet, subtoolNameCurrent, [FileNameExtract, [GetActiveToolPath], 2]]
+	[VarSet, sourceIndex, [SubToolGetActiveIndex]]
 
 
+	[If, copySource || projectAll,
+		[IPress,Tool:SubTool:Duplicate]]
 
-	//[FileNameSetNext,"C:\Users\Public\Documents/ZBrushData2022/Temp/objIn.goz"]
+	[VarSet, remeshIndex, [SubToolGetActiveIndex]]
+
 	[IPress,Tool:Geometry:ZRemesher]
 
-	/* HIDE ALL SUBTOOLS */
-	[Loop, [SubToolGetCount],
-		[VarSet,isVis,0]
-		[RoutineCall,SubToolIsVisible,isVis, i ]
 
-		[If, (isVis), //code for visible subtool
-			[RoutineCall, subtoolVisibility, i , 0 ]]
-
-	, i]
-
-	/* SHOW SOURCE  */
-	[RoutineCall, subtoolVisibility, [SubToolGetActiveIndex], 1 ]
-
-	/* SHOW REMESHED  */
-	[RoutineCall, subtoolVisibility, [SubToolGetActiveIndex] -1 , 1 ]
-
-	[IPress,Tool:Geometry:Close Holes]
-
-	[RoutineCall, renameSubtool, "Shell-Remeshed"]
-
-	/* PROJECT DETAILS */
-	[IPress,Tool:SubTool:ProjectAll]
+	//[IPress,Tool:SubTool:V8]
 
 
-////, // PARAMS
+	[If, projectAll,
 
+		/* HIDE ALL SUBTOOLS */
+		[Loop, [SubToolGetCount],
+			[VarSet,isVis,0]
+			[RoutineCall,SubToolIsVisible,isVis, i ]
+
+			[If, (isVis), //code for visible subtool
+				[RoutineCall, subtoolVisibility, i , 0 ]]
+
+		, i]
+
+		/* SHOW SOURCE  */
+		[RoutineCall, subtoolVisibility, sourceIndex, 1 ]
+
+		/* SHOW REMESHED  */
+		[RoutineCall, subtoolVisibility, remeshIndex, 1 ]
+
+		[IPress,Tool:Geometry:Close Holes]
+
+		/* PROJECT DETAILS */
+		[IPress,Tool:SubTool:ProjectAll]
+
+
+		/* REMOVE SOURCE OBJECT */
+		[If, copySource == 0,
+			[SubToolSelect, sourceIndex ]
+			[IKeyPress,'2',[IPress, Tool:SubTool:Delete]] // 2: Ok 3: always ok
+		]
+
+		//[IPress,Tool:SubTool:V1]
+	]
+
+
+	/* RENAME REMESH BY SOURCE OBJECT - with suffix  if copy*/
+	[If, copySource,
+		[RoutineCall, renameSubtool, [StrMerge, subtoolNameCurrent, "-REMESH"] ]
+	, // ELSE
+		[RoutineCall, renameSubtool, subtoolNameCurrent]
+	]
+
+
+
+, // PARAMS
+	copySource, projectAll
 ]
 
 /** extractShell
