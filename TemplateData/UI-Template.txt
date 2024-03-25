@@ -1,5 +1,8 @@
-[IPalette, PLUGINNENU ]
-[ISubPalette, [StrMerge, PLUGINNENU, ":", PLUGINSUBMENU ]]
+
+
+[If, [StrLength, CONTROLSPATH ] > 0, // THEN
+	[ISubPalette, [StrMerge, PLUGINNENU, ":", PLUGINSUBMENU ]]]
+
 
 
 /* This button is fired up by DefaultZScript, it runs plugin first time and initialize it, otherwise ISwitch does not work on first click properly */

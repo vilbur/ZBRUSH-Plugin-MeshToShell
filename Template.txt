@@ -9,18 +9,49 @@
 [VarSet, PLUGINDATAPATH,	[FileNameResolvePath, [StrMerge, PLUGINNAME, "Data" ]]]
 
 
+/*------------------------------------------------------------------------------
 
-//[VarSet, CONTROLSPATH,	[StrMerge, PLUGINNENU, ":", PLUGINSUBMENU, ":"]]	// FULL PATH: Menu > Submenu > Control
-[VarSet, CONTROLSPATH,	[StrMerge, PLUGINNENU, ":"]]	// MENU PATH: Menu > Submenu > Control
-//[VarSet, CONTROLSPATH,	"" ]	// DEV controls in script pane
+	PRODUCTION: CONTROLS IN MENU, use this path to place controls in bmenu: PluginMenu > Control
+
+	[VarSet, CONTROLSPATH,	[StrMerge, PLUGINNENU, ":"]]
+
+--------------------------------------------------------------------------------*/
+
+
+/*------------------------------------------------------------------------------
+
+	PRODUCTION: CONTROLS IN SUBMENU, use this path to place controls in submenu: Menu > Submenu > Control
+
+	[VarSet, CONTROLSPATH,	[StrMerge, PLUGINNENU, ":", PLUGINSUBMENU, ":"]]
+
+--------------------------------------------------------------------------------*/
+
+
+
+/*------------------------------------------------------------------------------
+
+	DEVELOPMENT: use this to show buttons in script pane, allow to be roladed on development
+
+	[VarSet, CONTROLSPATH,	"" ]
+
+--------------------------------------------------------------------------------*/
+
+	[VarSet, CONTROLSPATH,	"" ]
+
 
 
 [VarSet, ZFILEUTILSDLL, [StrMerge, PLUGINDATAPATH, "\\ZFileUtils64.dll"] ]
 
 
+[If, [StrLength, CONTROLSPATH ] > 0, // THEN
+	[IPalette,  PLUGINNENU ]]
 
-[IPalette,  PLUGINNENU ]
 
+/* OPEN PLUGIN MENU HORTCUT BUTTONS  */
+[IButton, [StrMerge, CONTROLSHELPERS,"[ ",PLUGINNAME," ]"] , "Open: Plugin Menu ",	[IShow, PLUGINNENU ],, 96	,,,]
+
+
+<zscriptinsert, "TemplateData/UI-Template.txt">	// "./TemplateData/UI-Template.txt"
 
 /* zscriptinsert COMMAND IS EXECUTED EVEN IF IS COMENTED - It is divided to 2 lines because of that
 
