@@ -1,5 +1,8 @@
 
 /**
+  
+  sendHotkeyToZbrsuh("{Ctrl Down}{Shift Down}{F8}{Ctrl Up}{Shift Up}")
+  
  */
 sendHotkeyToZbrsuh( $key_shortcut )
 {

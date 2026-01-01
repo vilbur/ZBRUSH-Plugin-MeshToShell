@@ -103,7 +103,7 @@
 
 
 
-,/*Disabled*/, 96 ,/*Hotkey*/,/*Icon*/, 64 ]
+,/*Disabled*/, 96 ,/*Hotkey*/,/*Icon*/, 48 ]
 
 
 
@@ -132,8 +132,36 @@
 
 ,,,	24]
 
-[IModify, [StrMerge, CONTROLSHELPERS,"Copy"],	96, 32 ]
-[IModify, [StrMerge, CONTROLSHELPERS,"Project"],	96, 32 ]
+[IModify, [StrMerge, CONTROLSHELPERS,"Copy"],	48, 32 ]
+[IModify, [StrMerge, CONTROLSHELPERS,"Project"],	48, 32 ]
+
+
+	
+[IButton, [StrMerge, CONTROLSHELPERS,"PRESET"],"Load zRemeher preset",
+	
+	
+	[IPress,Tool:Geometry:Adapt]
+	
+	
+	[IPress,Tool:Geometry:Double]
+	
+	
+	[IPress,Tool:Geometry:KeepGroups]
+	[ISet,Tool:Geometry:SmoothGroups,0.2]
+	
+	//[ISet,Tool:Geometry:Curves Strength,0.2]
+	[ISet,Tool:Geometry:Curves Strength,0 ]
+	
+	[ISet,Tool:Geometry:AdaptiveSize,0 ]
+	
+	//[IPress,Tool:Geometry:Legacy (2018) ]
+	
+	
+	[IPress, [StrMerge, CONTROLSHELPERS,"Project"] ]
+
+
+,/*Disabled*/, 48 ,/*Hotkey*/,/*Icon*/, 48 ]
+
 
 /** PROJECT ALL
   */
