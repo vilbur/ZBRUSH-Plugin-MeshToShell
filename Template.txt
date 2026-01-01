@@ -8,6 +8,7 @@
 [VarSet, PLUGINNENU,	[StrMerge, "~", PLUGINNAME ]]
 [VarSet, PLUGINDATAPATH,	[FileNameResolvePath, [StrMerge, PLUGINNAME, "Data" ]]]
 
+[VarSet, ZFILEUTILSDLL, [StrMerge, PLUGINDATAPATH, "\\ZFileUtils64.dll"] ]
 
 /*------------------------------------------------------------------------------
 
@@ -39,12 +40,9 @@
 	[VarSet, CONTROLSPATH,	"" ]
 
 
-
-[VarSet, ZFILEUTILSDLL, [StrMerge, PLUGINDATAPATH, "\\ZFileUtils64.dll"] ]
-
-
 [If, [StrLength, CONTROLSPATH ] > 0, // THEN
 	[IPalette,  PLUGINNENU ]]
+
 
 
 /* OPEN PLUGIN MENU HORTCUT BUTTONS  */
