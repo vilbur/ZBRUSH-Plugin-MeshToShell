@@ -1,8 +1,8 @@
 /**
   *
   */
-[VarSet, PLUGINNAME, 	"TEMPLATE"]
-[VarSet, PLUGINSUBMENU, 	"TemplateSubmenu"]
+[VarSet, PLUGINNAME, 	"Template"]
+[VarSet, PLUGINSUBMENU, 	""]
 
 
 [VarSet, PLUGINNENU,	[StrMerge, "~", PLUGINNAME ]]
@@ -10,38 +10,44 @@
 
 [VarSet, ZFILEUTILSDLL, [StrMerge, PLUGINDATAPATH, "\\ZFileUtils64.dll"] ]
 
+
+
 /*------------------------------------------------------------------------------
 
-	PRODUCTION: CONTROLS IN MENU, use this path to place controls in bmenu: PluginMenu > Control
+	PRODUCTION: CONTROLS IN MENU, use this path to place controls in menu: PluginMenu > Control
 
-	[VarSet, CONTROLSPATH,	[StrMerge, PLUGINNENU, ":"]]
+	[VarSet, CONTROLSPATH,	[StrMerge, PLUGINNENU, ":"]] // PRODUCTION: CONTROLS IN MENU
 
 --------------------------------------------------------------------------------*/
+
+	[VarSet, CONTROLSPATH,	[StrMerge, PLUGINNENU, ":"]] // PRODUCTION: CONTROLS IN MENU
 
 
 /*------------------------------------------------------------------------------
 
 	PRODUCTION: CONTROLS IN SUBMENU, use this path to place controls in submenu: Menu > Submenu > Control
 
-	[VarSet, CONTROLSPATH,	[StrMerge, PLUGINNENU, ":", PLUGINSUBMENU, ":"]]
+	[VarSet, CONTROLSPATH,	[StrMerge, PLUGINNENU, ":", PLUGINSUBMENU, ":"]] // PRODUCTION: CONTROLS IN SUBMENU
 
 --------------------------------------------------------------------------------*/
-
 
 
 /*------------------------------------------------------------------------------
 
-	DEVELOPMENT: use this to show buttons in script pane, allow to be roladed on development
+	DEVELOPMENT: LOAD AS SCRIPT. Use this to show buttons in script pane, allow to be roladed on development
 
-	[VarSet, CONTROLSPATH,	"" ]
+	[VarSet, CONTROLSPATH,	"" ] // DEVELOPMENT: LOAD AS SCRIPT
 
 --------------------------------------------------------------------------------*/
 
-	[VarSet, CONTROLSPATH,	"" ]
 
-
+/* CREATE MENU */ 
 [If, [StrLength, CONTROLSPATH ] > 0, // THEN
 	[IPalette,  PLUGINNENU ]]
+
+/* CREATE SUB MENU */ 
+[If, [StrLength, PLUGINSUBMENU ] > 0, // THEN
+	[ISubPalette, [StrMerge, PLUGINNENU, ":", PLUGINSUBMENU ]]]
 
 
 
